@@ -1,24 +1,16 @@
-clientes = []
-proximo_id_cliente = 1
-
-
 def pedir_dni():
     dni = input("Ingrese DNI: ")
-
     while not dni.isdigit():
         print("Error: el DNI debe contener solo números.")
         dni = input("Ingrese DNI nuevamente: ")
-
     return dni
 
 
 def pedir_email():
     email = input("Ingrese email (opcional): ")
-
     while email != "" and "@" not in email:
         print("Error: el email debe contener @ o dejarse vacío.")
         email = input("Ingrese email nuevamente: ")
-
     return email
 
 
@@ -46,20 +38,30 @@ def pedir_tipo_cliente():
             return "vivero amigo"
 
 
-def existe_dni(dni):
+def existe_dni(clientes, dni):
     for cliente in clientes:
         if cliente["dni"] == dni:
             return True
-
     return False
 
 
-def buscar_cliente_por_dni(dni):
+def buscar_cliente_por_dni(clientes, dni):
     for cliente in clientes:
         if cliente["dni"] == dni:
             return cliente
-
     return None
+
+
+def obtener_proximo_id(clientes):
+    if len(clientes) == 0:
+        return 1
+
+    mayor_id = 0
+    for cliente in clientes:
+        if cliente["id"] > mayor_id:
+            mayor_id = cliente["id"]
+
+    return mayor_id + 1
 
 
 def mostrar_cliente(cliente):
@@ -74,62 +76,46 @@ def mostrar_cliente(cliente):
     print("--------------------------")
 
 
-def cargar_cliente():
-    global proximo_id_cliente
-
+def cargar_cliente(clientes):
     dni = pedir_dni()
 
-    if existe_dni(dni):
+    if existe_dni(clientes, dni):
         print("Error: ya existe un cliente cargado con ese DNI.")
         return
 
-    nombre = input("Ingrese nombre completo: ")
-    telefono = input("Ingrese teléfono: ")
-    email = pedir_email()
-    tipo = pedir_tipo_cliente()
-    notas = input("Ingrese notas del cliente: ")
-
     cliente = {
-        "id": proximo_id_cliente,
+        "id": obtener_proximo_id(clientes),
         "dni": dni,
-        "nombre": nombre,
-        "telefono": telefono,
-        "email": email,
-        "tipo": tipo,
-        "notas": notas
+        "nombre": input("Ingrese nombre completo: "),
+        "telefono": input("Ingrese teléfono: "),
+        "email": pedir_email(),
+        "tipo": pedir_tipo_cliente(),
+        "notas": input("Ingrese notas del cliente: ")
     }
 
     clientes.append(cliente)
-    proximo_id_cliente += 1
-
     print("Cliente cargado correctamente.")
 
 
-def listar_clientes():
+def listar_clientes(clientes):
     if len(clientes) == 0:
         print("No hay clientes cargados.")
         return
-
-    print("\n--- LISTADO DE CLIENTES ---")
 
     for cliente in clientes:
         mostrar_cliente(cliente)
 
 
-def buscar_cliente():
+def buscar_cliente(clientes):
     if len(clientes) == 0:
         print("No hay clientes cargados.")
         return
 
-    dato_busqueda = input("Ingrese DNI o nombre del cliente a buscar: ").lower()
-
+    dato = input("Ingrese DNI o nombre del cliente a buscar: ").lower()
     encontrado = False
 
     for cliente in clientes:
-        dni = cliente["dni"].lower()
-        nombre = cliente["nombre"].lower()
-
-        if dato_busqueda in dni or dato_busqueda in nombre:
+        if dato in cliente["dni"].lower() or dato in cliente["nombre"].lower():
             mostrar_cliente(cliente)
             encontrado = True
 
@@ -137,14 +123,13 @@ def buscar_cliente():
         print("No se encontró ningún cliente con ese dato.")
 
 
-def modificar_cliente():
+def modificar_cliente(clientes):
     if len(clientes) == 0:
         print("No hay clientes cargados.")
         return
 
     dni_buscar = input("Ingrese el DNI del cliente que desea modificar: ")
-
-    cliente = buscar_cliente_por_dni(dni_buscar)
+    cliente = buscar_cliente_por_dni(clientes, dni_buscar)
 
     if cliente is None:
         print("No se encontró ningún cliente con ese DNI.")
@@ -169,7 +154,7 @@ def modificar_cliente():
 
             if nuevo_dni == cliente["dni"]:
                 print("El DNI ingresado es el mismo que ya tenía el cliente.")
-            elif existe_dni(nuevo_dni):
+            elif existe_dni(clientes, nuevo_dni):
                 print("Error: ya existe otro cliente cargado con ese DNI.")
             else:
                 cliente["dni"] = nuevo_dni
@@ -202,14 +187,13 @@ def modificar_cliente():
             print("Opción incorrecta.")
 
 
-def eliminar_cliente():
+def eliminar_cliente(clientes):
     if len(clientes) == 0:
         print("No hay clientes cargados.")
         return
 
     dni_buscar = input("Ingrese el DNI del cliente que desea eliminar: ")
-
-    cliente = buscar_cliente_por_dni(dni_buscar)
+    cliente = buscar_cliente_por_dni(clientes, dni_buscar)
 
     if cliente is None:
         print("No se encontró ningún cliente con ese DNI.")
