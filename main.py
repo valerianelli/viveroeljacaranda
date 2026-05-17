@@ -2,7 +2,7 @@ from stock import menu_stock
 from clientes import menu_clientes
 from proveedores import menu_proveedores
 from ventas import menu_ventas
-from encargos import menu_encargos
+from encargos.menu_encargos import menu_encargos
 
 plantas = []
 clientes = []

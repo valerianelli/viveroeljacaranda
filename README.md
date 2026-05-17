@@ -2,6 +2,12 @@
 
 ## INTEGRANTES:
 
-Valeria Nelli
-Ariel Guas
-Luciano Maciel
+. Valeria Nelli
+. Ariel Guas
+. Luciano Maciel
+
+---
+Tests encargos:
+python3 test_encargos.py
+
+
