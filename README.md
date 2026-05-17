@@ -8,6 +8,6 @@
 
 ---
 Tests encargos:
-python3 test_encargos.py
+python3 encargos/test_encargos.py
 
 
