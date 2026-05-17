@@ -1,4 +1,4 @@
-  from clientes import (
+from .clientes import (
     cargar_cliente,
     listar_clientes,
     buscar_cliente,
@@ -7,7 +7,7 @@
 )
 
 
-def menu_clientes():
+def menu_clientes(clientes):
     opcion = ""
 
     while opcion != "6":
@@ -23,26 +23,16 @@ def menu_clientes():
 
         match opcion:
             case "1":
-                cargar_cliente()
-
+                cargar_cliente(clientes)
             case "2":
-                listar_clientes()
-
+                listar_clientes(clientes)
             case "3":
-                buscar_cliente()
-
+                buscar_cliente(clientes)
             case "4":
-                modificar_cliente()
-
+                modificar_cliente(clientes)
             case "5":
-                eliminar_cliente()
-
+                eliminar_cliente(clientes)
             case "6":
                 print("Volviendo al menú principal...")
-
             case _:
                 print("Opción incorrecta. Intente nuevamente.")
-
-
-if __name__ == "__main__":
-    menu_clientes()
