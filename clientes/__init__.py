@@ -1,4 +1,1 @@
-# ============================
-# PAQUETE CLIENTES
-# Sistema Vivero El Jacarandá
-# ============================
+from .menu_clientes import menu_clientes
