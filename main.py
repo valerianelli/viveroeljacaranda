@@ -15,14 +15,12 @@ def mostrar_opciones():
     print("═══════════════════════════════════════════════════")
     print("       🌱 VIVERO EL JACARANDÁ — Sistema v1.0      ")
     print("═══════════════════════════════════════════════════")
-    print("")
-    print("1. Stock de plantas")
+    print("\n1. Stock de plantas")
     print("2. Clientes")
     print("3. Ventas")
     print("4. Proveedores")
     print("5. Encargos especiales")
-    print("0. Salir")
-    print("")
+    print("0. Salir\n")
 
 
 def menu_principal():
@@ -43,7 +41,7 @@ def menu_principal():
             case "0":
                 break
             case _:
-                print("Opción inválida, intente denuevo...\n")
+                print("Opción inválida, intente de nuevo...\n")
 
 
 menu_principal()
