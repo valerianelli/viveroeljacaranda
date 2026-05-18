@@ -60,18 +60,18 @@ def buscar_por_id(lista, id_buscado):
     return None
 
 
-def pedir_confirmacion(mensaje="¿Confirmar? (si/no): "):
+def pedir_confirmacion(mensaje="¿Confirmar? (s/n): "):
     """
-    Solicita confirmación al usuario en un loop hasta recibir 'si' o 'no'.
+    Solicita confirmación al usuario en un loop hasta recibir 's' o 'n'.
     Retorna True si confirma, False si cancela.
     """
     while True:
         respuesta = input(f"\n{mensaje}").lower()
-        if respuesta == "si":
+        if respuesta == "s":
             return True
-        if respuesta == "no":
+        if respuesta == "n":
             return False
-        print("Opción inválida, ingrese 'si' o 'no'...")
+        print("Opción inválida, ingrese 's' o 'n'...")
 
 
 def imprimir_exito(mensaje):

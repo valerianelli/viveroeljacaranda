@@ -160,7 +160,7 @@ def modificar_venta(ventas, clientes, plantas):
         if not datos_nuevos:
             break
 
-        if pedir_confirmacion("¿Confirmar modificación? (si/no): "):
+        if pedir_confirmacion("¿Confirmar modificación? (s/n): "):
             _aplicar_modificacion(venta, datos_nuevos, plantas)
             imprimir_exito("Venta actualizada correctamente!")
 
@@ -398,7 +398,7 @@ def eliminar_venta(ventas, plantas):
             print("No se encontró una venta con ese ID, intente de nuevo...")
             continue
 
-        if not pedir_confirmacion("¿Confirmar borrado? (si/no): "):
+        if not pedir_confirmacion("¿Confirmar borrado? (s/n): "):
             break
 
         _restaurar_stock(venta["items"], plantas)
