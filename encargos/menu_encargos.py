@@ -1,8 +1,25 @@
 from encargos.encargos import registrar_encargo, cambiar_estado, eliminar_encargo_fisico
 
+class SinClienteOSinProveedorException(Exception):
+    pass
+
 def mostrar_encargo(e):
     """Imprime un encargo de forma amigable"""
     print(f"[{e['id']}] Cliente ID: {e['id_cliente']} | {e['descripcion']} | Estado: {e['estado'].upper()}")
+
+def _existe_cliente(cliente_id, lista_clientes):
+    for cliente in lista_clientes:
+        if cliente['id'] == cliente_id:
+            return True
+
+    return False
+
+def _existe_proveedor(proveedor_id, lista_proveedores):
+    for proveedor in lista_proveedores:
+        if proveedor['id'] == proveedor_id:
+            return True
+
+    return False
 
 def menu_encargos(lista_encargos, lista_clientes, lista_proveedores):
     """Controlador del área de encargos (pág. 5)"""
@@ -26,12 +43,18 @@ def menu_encargos(lista_encargos, lista_clientes, lista_proveedores):
                 desc = input("Descripción (ej: Limonero 4 patas): ")
                 cant = int(input("Cantidad: "))
                 sena = float(input("Seña recibida: "))
+
+                if (not _existe_cliente(id_c, lista_clientes) or 
+                    not _existe_proveedor(id_p, lista_proveedores)):
+                    raise SinClienteOSinProveedorException()
                 
                 resultado = registrar_encargo(lista_encargos, id_c, id_p, desc, cant, sena)
                 if type(resultado) == str:
                     print(resultado)
                 else:
                     print("✓ Encargo guardado exitosamente.")
+            except SinClienteOSinProveedorException:
+                print("Error: No existe cliente o proveedor.")
             except ValueError:
                 print("Error: Ingrese valores numéricos válidos.")
 
