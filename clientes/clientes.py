@@ -4,7 +4,7 @@ def generar_id_cliente(clientes):
     return max(cliente["id"] for cliente in clientes) + 1
 
 
-def registrar_cliente(clientes):
+def cargar_cliente(clientes):
     print("\n--- Registrar cliente ---")
 
     id_cliente = generar_id_cliente(clientes)
