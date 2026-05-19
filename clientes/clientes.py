@@ -130,85 +130,72 @@ def mostrar_cliente(cliente):
 
 
 def modificar_cliente(clientes):
-    print("\n--- Modificar cliente ---")
 
     dni = input("Ingrese el DNI del cliente a modificar: ")
-    cliente = buscar_cliente_por_dni(clientes, dni)
 
-    if cliente is None:
-        print("No se encontró un cliente con ese DNI.")
+    cliente_encontrado = None
+
+    for cliente in clientes:
+        if cliente["dni"] == dni:
+            cliente_encontrado = cliente
+
+    if cliente_encontrado is None:
+        print("Cliente no encontrado.")
         return
 
-    while True:
-        print("\n¿Qué dato desea modificar?")
-        print("1. Nombre completo")
+    seguir_modificando = True
+
+    while seguir_modificando:
+
+        print("\n--- MODIFICAR CLIENTE ---")
+        print("1. Nombre")
         print("2. Teléfono")
         print("3. Email")
-        print("4. Tipo de cliente")
+        print("4. Tipo")
         print("5. Notas")
-        print("0. Volver")
+        print("0. Finalizar modificación")
 
         opcion = input("Seleccione una opción: ")
 
         if opcion == "1":
-            cliente["nombre_completo"] = input("Nuevo nombre completo: ")
-            print("Nombre modificado correctamente.")
-            break
+
+            nuevo_nombre = input("Ingrese nuevo nombre: ")
+            cliente_encontrado["nombre_completo"] = nuevo_nombre
+            print("Nombre actualizado.")
 
         elif opcion == "2":
-            cliente["telefono"] = input("Nuevo teléfono: ")
-            print("Teléfono modificado correctamente.")
-            break
+
+            nuevo_telefono = input("Ingrese nuevo teléfono: ")
+            cliente_encontrado["telefono"] = nuevo_telefono
+            print("Teléfono actualizado.")
 
         elif opcion == "3":
-            nuevo_email = input("Nuevo email: ")
 
-            if nuevo_email != "" and "@" not in nuevo_email:
-                print("Email inválido. Debe contener '@'.")
-            else:
-                cliente["email"] = nuevo_email
-                print("Email modificado correctamente.")
-                break
+            nuevo_email = input("Ingrese nuevo email: ")
+            cliente_encontrado["email"] = nuevo_email
+            print("Email actualizado.")
 
         elif opcion == "4":
-            print("Tipo de cliente:")
-            print("1. Particular")
-            print("2. Paisajista")
-            print("3. Empresa")
-            print("4. Vivero amigo")
 
-            opcion_tipo = input("Seleccione una opción: ")
-
-            if opcion_tipo == "1":
-                cliente["tipo"] = "particular"
-                print("Tipo modificado correctamente.")
-                break
-            elif opcion_tipo == "2":
-                cliente["tipo"] = "paisajista"
-                print("Tipo modificado correctamente.")
-                break
-            elif opcion_tipo == "3":
-                cliente["tipo"] = "empresa"
-                print("Tipo modificado correctamente.")
-                break
-            elif opcion_tipo == "4":
-                cliente["tipo"] = "vivero amigo"
-                print("Tipo modificado correctamente.")
-                break
-            else:
-                print("Opción incorrecta. Intente nuevamente.")
+            nuevo_tipo = input("Ingrese nuevo tipo: ")
+            cliente_encontrado["tipo"] = nuevo_tipo
+            print("Tipo actualizado.")
 
         elif opcion == "5":
-            cliente["notas"] = input("Nuevas notas: ")
-            print("Notas modificadas correctamente.")
-            break
+
+            nuevas_notas = input("Ingrese nuevas notas: ")
+            cliente_encontrado["notas"] = nuevas_notas
+            print("Notas actualizadas.")
 
         elif opcion == "0":
-            print("Modificación cancelada.")
-            break
+
+            print("Modificación finalizada.")
+            seguir_modificando = False
 
         else:
-            print("Opción incorrecta. Intente nuevamente.")
+
+            print("Opción incorrecta. Vuelva a ingresar una opción.")
+            continue
 
 
 def eliminar_cliente(clientes):
