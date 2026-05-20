@@ -5,6 +5,7 @@
 ##### Valeria Nelli
 ##### Ariel Guas
 ##### Luciano Maciel
+##### Eliana Jovanovich
 
 ---
 Tests encargos:
