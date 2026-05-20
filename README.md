@@ -6,6 +6,7 @@
 ##### Ariel Guas
 ##### Luciano Maciel
 ##### Eliana Jovanovich
+##### Miguel Casaretto
 
 ---
 Tests encargos:
