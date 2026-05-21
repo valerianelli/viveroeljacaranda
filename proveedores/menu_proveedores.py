@@ -1,4 +1,5 @@
-from proveedores import (
+
+from .proveedores import (
     registrar_proveedor,
     listar_proveedores,
     buscar_proveedor,
@@ -7,7 +8,7 @@ from proveedores import (
 )
 
 
-def menu_proveedores():
+def menu_proveedores(proveedores):
 
     opcion = ""
 
@@ -26,25 +27,22 @@ def menu_proveedores():
         match opcion:
 
             case "1":
-                registrar_proveedor()
+                registrar_proveedor(proveedores)
 
             case "2":
-                listar_proveedores()
+                listar_proveedores(proveedores)
 
             case "3":
-                buscar_proveedor()
+                buscar_proveedor(proveedores)
 
             case "4":
-                actualizar_proveedor()
+                actualizar_proveedor(proveedores)
 
             case "5":
-                eliminar_proveedor()
+                eliminar_proveedor(proveedores)
 
             case "0":
                 print("Saliendo del sistema...")
 
             case _:
                 print("Opción inválida.")
-
-
-menu_proveedores()
