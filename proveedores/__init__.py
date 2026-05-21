@@ -1,7 +1,1 @@
-from .proveedores import (
-    registrar_proveedor,
-    listar_proveedores,
-    buscar_proveedor,
-    actualizar_proveedor,
-    eliminar_proveedor
-)
+from .menu_proveedores import menu_proveedores
