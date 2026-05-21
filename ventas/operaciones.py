@@ -1,6 +1,6 @@
 from datetime import date
 from copy import deepcopy
-import re
+
 
 from .constantes import (
     FORMAS_PAGO,
@@ -123,15 +123,10 @@ def _buscar_por_dni(ventas, clientes, plantas, dni):
 
 def _buscar_por_fecha(ventas, plantas, entrada):
     """Parsea la fecha ingresada y muestra las ventas de ese día. Retorna True si encontró."""
-    partes = re.split(r"[/\-_|.,:;#]|\s+del?\s+|\s+", entrada)
-    if len(partes) != 3:
-        print("Formato de fecha no reconocido, intente con dd/mm/yyyy o yyyy-mm-dd...")
-        return False
-
     fecha = parsear_fecha(entrada)
     if not fecha:
+        print("Formato de fecha no reconocido, intente con dd/mm/yyyy o yyyy-mm-dd...")
         return False
-
     return mostrar_ventas(ventas, plantas, fecha=fecha)
 
 
@@ -148,10 +143,12 @@ def modificar_venta(ventas, clientes, plantas):
         if not id_venta.isdigit():
             print("El ID debe ser un número, intente de nuevo...")
             continue
-        if int(id_venta) == 0:
+
+        id_venta = int(id_venta)
+        if id_venta == 0:
             break
 
-        venta = buscar_por_id(ventas, int(id_venta))
+        venta = buscar_por_id(ventas, id_venta)
         if not venta:
             print("No se encontró una venta con ese ID, intente de nuevo...")
             continue
@@ -190,7 +187,6 @@ def _pedir_datos_nuevos(venta, clientes, plantas):
                 resultado = True
             case "forma_pago":
                 resultado = _modificar_forma_pago(datos_nuevos, valor)
-                resultado = True
 
         if not resultado:
             return None
@@ -201,47 +197,46 @@ def _pedir_datos_nuevos(venta, clientes, plantas):
 def _modificar_id_cliente(datos_nuevos, valor_actual, clientes):
     while True:
         print(f"\nID del cliente (actual): {valor_actual}")
-        entrada = input("Ingrese ID de cliente nuevo (0: volver, -1: siguiente): ")
+        id_nuevo = input("Ingrese ID de cliente nuevo (0: volver, -1: siguiente): ")
 
-        if entrada == "-1":
+        if id_nuevo == "-1":
             return True
-        if not entrada.isdigit():
+        if not id_nuevo.isdigit():
             print("El ID debe ser un número, intente de nuevo...")
             continue
-        if int(entrada) == 0:
+
+        id_nuevo = int(id_nuevo)
+        if id_nuevo == 0:
             return False
-        if int(entrada) == valor_actual:
+        if id_nuevo == valor_actual:
             print("El ID ingresado es igual al actual, ingrese uno diferente...")
             continue
 
-        if buscar_por_id(clientes, int(entrada)):
-            datos_nuevos["id_cliente"] = int(entrada)
-            return True
+        if not buscar_por_id(clientes, id_nuevo):
+            print("No se encontró un cliente con ese ID, intente de nuevo...")
+            continue
 
-        print("No se encontró un cliente con ese ID, intente de nuevo...")
+        datos_nuevos["id_cliente"] = id_nuevo
+        return True
 
 
 def _modificar_fecha(datos_nuevos, valor_actual):
     while True:
         print(f"\nFecha (actual): {valor_actual}")
-        entrada = input("Ingrese la nueva fecha (0: volver, -1: siguiente): ")
+        fecha_nueva = input("Ingrese la nueva fecha (0: volver, -1: siguiente): ")
 
-        if entrada == "-1":
+        if fecha_nueva == "-1":
             return True
-        if entrada.isdigit() and int(entrada) == 0:
+        if fecha_nueva == "0":
             return False
 
-        partes = re.split(r"[/\-_|.,:;#]|\s+del?\s+|\s+", entrada)
-        if len(partes) != 3:
-            print(
-                "Formato de fecha no reconocido, intente con dd/mm/yyyy o yyyy-mm-dd..."
-            )
+        fecha_nueva = parsear_fecha(fecha_nueva)
+        if not fecha_nueva:
+            print("Formato de fecha no reconocido, intente con dd/mm/yyyy o yyyy-mm-dd...")
             continue
 
-        fecha = parsear_fecha(entrada)
-        if fecha:
-            datos_nuevos["fecha"] = fecha
-            return True
+        datos_nuevos["fecha"] = fecha_nueva
+        return True
 
 
 def _modificar_items(datos_nuevos, items_actuales, plantas):
@@ -251,26 +246,24 @@ def _modificar_items(datos_nuevos, items_actuales, plantas):
         print("\nPlantas vendidas (actual):")
         imprimir_items(datos_nuevos["items"], plantas)
 
-        entrada = input("\nIngrese ID de la planta (0: volver, -1: siguiente): ")
+        id_planta = input("\nIngrese ID de la planta (0: volver, -1: siguiente): ")
 
-        if entrada == "-1":
+        if id_planta == "-1":
             return True
-        if not entrada.isdigit():
+        if not id_planta.isdigit():
             print("El ID debe ser un número, intente de nuevo...")
             continue
-        if int(entrada) == 0:
+
+        id_planta = int(id_planta)
+        if id_planta == 0:
             return False
 
-        item = next(
-            (i for i in datos_nuevos["items"] if i["id_planta"] == int(entrada)), None
-        )
+        item = next((i for i in datos_nuevos["items"] if i["id_planta"] == id_planta), None)
         if not item:
-            print(
-                "No se encontró una planta con ese ID en la venta, intente de nuevo..."
-            )
+            print("No se encontró una planta con ese ID en la venta, intente de nuevo...")
             continue
 
-        planta = buscar_por_id(plantas, int(entrada))
+        planta = buscar_por_id(plantas, id_planta)
         if not planta:
             print("La planta ya no existe en el stock, ingrese otra...")
             continue
@@ -278,29 +271,42 @@ def _modificar_items(datos_nuevos, items_actuales, plantas):
         _modificar_cantidad_item(item, planta, datos_nuevos["items"])
 
 
-def _modificar_cantidad_item(item, planta, items):
+def _modificar_cantidad_item(item, planta, datos_nuevos):
     while True:
-        entrada = input(
+        print(f"\nCantidad (actual): {item["cantidad"]}")
+        nueva_cantidad = input(
             "\nIngrese la nueva cantidad (0: volver, -1: siguiente, vacío: eliminar): "
         )
 
-        if entrada == "":
-            items.remove(item)
+        if nueva_cantidad == "":
+            datos_nuevos.remove(item)
             return
-        if entrada == "-1":
+        if nueva_cantidad == "-1":
             return
-        if entrada.isdigit() and int(entrada) == 0:
+        if not nueva_cantidad.isdigit():
+            print("La cantidad debe ser un número, intente de nuevo...")
+            continue
+
+        nueva_cantidad = int(nueva_cantidad)
+        if nueva_cantidad == 0:
             return
-        if entrada.isdigit() and int(entrada) > 0:
-            if int(entrada) <= planta["stock"]:
-                item["cantidad"] = int(entrada)
-                return
+
+        if nueva_cantidad < 0:
+            print("La cantidad debe ser un número positivo, intente de nuevo...")
+            continue
+
+        if nueva_cantidad > planta["stock"]:
             print(
                 f"La cantidad supera el stock disponible ({planta['stock']}), intente de nuevo..."
             )
             continue
 
-        print("La cantidad debe ser un número positivo, intente de nuevo...")
+        if nueva_cantidad == item["cantidad"]:
+            print("La cantidad nueva es igual a la actual, ingrese una diferente...")
+            continue
+
+        item["cantidad"] = nueva_cantidad
+        return
 
 
 def _recalcular_total(datos_nuevos, valor_actual):
@@ -315,22 +321,23 @@ def _recalcular_total(datos_nuevos, valor_actual):
 def _modificar_forma_pago(datos_nuevos, valor_actual):
     while True:
         print(f"\nForma de pago (actual): {valor_actual}")
-        entrada = input(
+        forma_pago_nueva = input(
             f"Ingrese la nueva forma de pago ({', '.join(FORMAS_PAGO)}, -1: siguiente): "
         ).lower()
 
-        if entrada == "-1":
+        if forma_pago_nueva == "-1":
             return True
-        if entrada == valor_actual:
+        if forma_pago_nueva == valor_actual:
             print(
                 "La forma de pago ingresada es igual a la actual, ingrese una diferente..."
             )
             continue
-        if entrada in FORMAS_PAGO:
-            datos_nuevos["forma_pago"] = entrada
-            return True
+        if not forma_pago_nueva in FORMAS_PAGO:
+            print(f"Forma de pago inválida, las opciones son: {', '.join(FORMAS_PAGO)}...")
+            continue
 
-        print(f"Forma de pago inválida, las opciones son: {', '.join(FORMAS_PAGO)}...")
+        datos_nuevos["forma_pago"] = forma_pago_nueva
+        return True
 
 
 def _aplicar_modificacion(venta, datos_nuevos, plantas):
@@ -368,9 +375,8 @@ def _ajustar_stock_por_modificacion(items_viejos, items_nuevos, plantas):
             planta["stock"] += diferencia  # positivo = devuelve, negativo = descuenta
 
     for item_nuevo in items_nuevos:
-        es_nuevo = not any(
-            i["id_planta"] == item_nuevo["id_planta"] for i in items_viejos
-        )
+        # Si no existe un item viejo con el mismo id_planta, entonces es nuevo (True)
+        es_nuevo = not any(i["id_planta"] == item_nuevo["id_planta"] for i in items_viejos)
         if es_nuevo:
             planta = buscar_por_id(plantas, item_nuevo["id_planta"])
             if planta:
@@ -390,10 +396,12 @@ def eliminar_venta(ventas, plantas):
         if not id_venta.isdigit():
             print("El ID debe ser un número, intente de nuevo...")
             continue
-        if int(id_venta) == 0:
+
+        id_venta = int(id_venta)
+        if id_venta == 0:
             break
 
-        venta = buscar_por_id(ventas, int(id_venta))
+        venta = buscar_por_id(ventas, id_venta)
         if not venta:
             print("No se encontró una venta con ese ID, intente de nuevo...")
             continue

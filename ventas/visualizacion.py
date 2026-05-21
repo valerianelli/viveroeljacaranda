@@ -49,10 +49,8 @@ def mostrar_ventas(ventas, plantas, id_cliente=None, fecha=None):
 
     print()
     print(SEPARADOR)
-    for i, venta in enumerate(ventas_a_mostrar):
+    for venta in ventas_a_mostrar:
         imprimir_venta(venta, plantas)
-        if i != len(ventas_a_mostrar) - 1:
-            print(SEPARADOR)
-    print(SEPARADOR)
+        print(SEPARADOR)
 
     return True
