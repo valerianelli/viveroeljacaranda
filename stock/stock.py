@@ -32,7 +32,7 @@ def planta_ya_existe(plantas, nombre_comun, nombre_cientifico):
             return planta
     return None
 
-def registrar_nueva_planta(plantas): #debberiamos hacer primero una verificacion de que no exista una planta con el mismo nombre comun o cientifico para evitar duplicados, o permitir cargar plantas con el mismo nombre pero mostrar un mensaje de advertencia al usuario para que pueda decidir si desea cargar la planta igual o no, o permitir cargar plantas con el mismo nombre pero asignarles un codigo diferente para diferenciarlas en el inventario, y si tiene todos los datos en comun que sume una al stock, de caso contrario que la cree
+def registrar_nueva_planta(plantas):  
     global proximo_codigo_planta
     
     nombre_comun, nombre_cientifico, categoria, sector, stock, precio, cuidados = cargar_planta()
@@ -135,7 +135,6 @@ def actualizar_stock_planta(plantas):
         print("\nEl inventario está vacío.")
         return
  
-    # El usuario no conoce el código interno → primero busca por nombre
     busqueda = input("\nIngrese el nombre de la planta a actualizar: ")
     resultados = buscar_plantas_por_texto(plantas, busqueda)
  
@@ -143,7 +142,7 @@ def actualizar_stock_planta(plantas):
         print("No se encontró ninguna planta con ese nombre.")
         return
  
-    # Si hay más de un resultado, el usuario elige cuál
+   
     planta = elegir_planta_de_lista(resultados)
     if planta is None:
         return
@@ -272,7 +271,7 @@ def eliminar_planta(plantas):
         print("\nEl inventario está vacío.")
         return
  
-    # El usuario no conoce el código interno → primero busca por nombre
+    #  usuario no conoce el código interno - primero busca por nombre
     busqueda = input("\nIngrese el nombre de la planta que desea eliminar: ")
     resultados = buscar_plantas_por_texto(plantas, busqueda)
  
