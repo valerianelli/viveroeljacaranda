@@ -26,4 +26,4 @@ def guardar_datos(datos, nombre_archivo):
     nombre_archivo = nombre_archivo.lower()
     if nombre_archivo in ("ventas", "encargos", "clientes", "plantas", "proveedores"):
         with open(f"archivos/{nombre_archivo}.json", "w", encoding="utf-8") as archivo:
-            json.dump(datos, archivo)
+            json.dump(datos, archivo, ensure_ascii=False, indent=2, default=str)
