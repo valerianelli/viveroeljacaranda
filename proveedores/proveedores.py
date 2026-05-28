@@ -76,7 +76,7 @@ def registrar_proveedor(lista_proveedores):
 
 def listar_proveedores(lista_proveedores):
 
-    if len(lista_proveedores) == 0:
+    if not lista_proveedores:
         print("No hay proveedores registrados.")
         return
 
@@ -190,7 +190,7 @@ def actualizar_proveedor(lista_proveedores):
 
 def eliminar_proveedor(lista_proveedores):
 
-    if len(lista_proveedores) == 0:
+    if not lista_proveedores:
         print("No hay proveedores registrados.")
         return
 
