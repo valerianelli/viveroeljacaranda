@@ -1,4 +1,4 @@
-from proveedores import (
+from .proveedores import (
     registrar_proveedor,
     listar_proveedores,
     buscar_proveedor,
