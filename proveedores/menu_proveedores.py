@@ -1,4 +1,4 @@
-from proveedores import (
+from .proveedores import (
     registrar_proveedor,
     listar_proveedores,
     buscar_proveedor,
@@ -6,8 +6,6 @@ from proveedores import (
     eliminar_proveedor
 )
 
-# La lista se define acá afuera para que los datos no se borren al salir del menú
-proveedores_sistema = []
 
 def menu_proveedores():
     opcion = ""
