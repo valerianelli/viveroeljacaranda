@@ -1,28 +1,61 @@
-proveedores = []
+from datetime import datetime
+
 proximo_id_proveedor = 1
 
 
-def registrar_proveedor():
+def validar_fecha(fecha_str):
+
+    try:
+        datetime.strptime(fecha_str, "%d/%m/%Y")
+        return True
+
+    except ValueError:
+        return False
+
+
+def registrar_proveedor(lista_proveedores):
 
     global proximo_id_proveedor
 
-    nombre = input("Ingrese nombre o razón social: ")
+    nombre = input("Ingrese nombre o razón social: ").strip()
 
-    telefono = input("Ingrese teléfono: ")
+    while not nombre:
+        print("El nombre no puede estar vacío.")
+        nombre = input("Ingrese nombre o razón social: ").strip()
 
-    email = input("Ingrese email: ")
+    telefono = input("Ingrese teléfono: ").strip()
 
-    localidad = input("Ingrese localidad: ")
+    while not telefono.isdigit():
+        print("Error: El teléfono debe contener solo números.")
+        telefono = input("Ingrese teléfono: ").strip()
+
+    email = input("Ingrese email: ").strip()
+
+    while "@" not in email:
+        print("Error: El email debe contener un '@'.")
+        email = input("Ingrese email: ").strip()
+
+    localidad = input("Ingrese localidad: ").strip()
 
     productos = input(
         "Ingrese qué provee (separado por coma): "
     ).split(",")
 
-    productos = [producto.strip() for producto in productos]
+    productos = [
+        producto.strip()
+        for producto in productos
+        if producto.strip()
+    ]
 
     fecha_ultimo_pedido = input(
-        "Ingrese fecha del último pedido: "
-    )
+        "Ingrese fecha del último pedido (DD/MM/AAAA): "
+    ).strip()
+
+    while not validar_fecha(fecha_ultimo_pedido):
+        print("Error: Formato inválido. Debe ser DD/MM/AAAA.")
+        fecha_ultimo_pedido = input(
+            "Ingrese fecha del último pedido (DD/MM/AAAA): "
+        ).strip()
 
     proveedor = {
         "id": proximo_id_proveedor,
@@ -34,20 +67,20 @@ def registrar_proveedor():
         "fecha_ultimo_pedido": fecha_ultimo_pedido
     }
 
-    proveedores.append(proveedor)
+    lista_proveedores.append(proveedor)
 
     proximo_id_proveedor += 1
 
     print("Proveedor registrado correctamente.")
 
 
-def listar_proveedores():
+def listar_proveedores(lista_proveedores):
 
-    if len(proveedores) == 0:
+    if not lista_proveedores:
         print("No hay proveedores registrados.")
         return
 
-    for proveedor in proveedores:
+    for proveedor in lista_proveedores:
 
         print("\n----------------------")
         print(f"ID: {proveedor['id']}")
@@ -59,20 +92,19 @@ def listar_proveedores():
         print(f"Último pedido: {proveedor['fecha_ultimo_pedido']}")
 
 
-def buscar_proveedor():
+def buscar_proveedor(lista_proveedores):
 
     busqueda = input(
         "Buscar por nombre o producto: "
-    ).lower()
+    ).lower().strip()
 
     encontrado = False
 
-    for proveedor in proveedores:
+    for proveedor in lista_proveedores:
 
         if (
             busqueda in proveedor["nombre"].lower()
-            or
-            any(
+            or any(
                 busqueda in producto.lower()
                 for producto in proveedor["productos"]
             )
@@ -93,27 +125,40 @@ def buscar_proveedor():
         print("Proveedor no encontrado.")
 
 
-def actualizar_proveedor():
+def actualizar_proveedor(lista_proveedores):
 
-    id_buscar = int(
-        input("Ingrese ID del proveedor a actualizar: ")
-    )
+    try:
+        id_buscar = int(
+            input("Ingrese ID del proveedor a actualizar: ")
+        )
 
-    for proveedor in proveedores:
+    except ValueError:
+        print("ID inválido.")
+        return
+
+    for proveedor in lista_proveedores:
 
         if proveedor["id"] == id_buscar:
 
-            proveedor["telefono"] = input(
-                "Nuevo teléfono: "
-            )
+            telefono = input("Nuevo teléfono: ").strip()
 
-            proveedor["email"] = input(
-                "Nuevo email: "
-            )
+            while not telefono.isdigit():
+                print("Error: El teléfono debe contener solo números.")
+                telefono = input("Nuevo teléfono: ").strip()
+
+            proveedor["telefono"] = telefono
+
+            email = input("Nuevo email: ").strip()
+
+            while "@" not in email:
+                print("Error: El email debe contener un '@'.")
+                email = input("Nuevo email: ").strip()
+
+            proveedor["email"] = email
 
             proveedor["localidad"] = input(
                 "Nueva localidad: "
-            )
+            ).strip()
 
             nuevos_productos = input(
                 "Nuevos productos (separados por coma): "
@@ -122,31 +167,63 @@ def actualizar_proveedor():
             proveedor["productos"] = [
                 producto.strip()
                 for producto in nuevos_productos
+                if producto.strip()
             ]
 
-            proveedor["fecha_ultimo_pedido"] = input(
-                "Nueva fecha del último pedido: "
-            )
+            fecha = input(
+                "Nueva fecha del último pedido (DD/MM/AAAA): "
+            ).strip()
 
-            print("Proveedor actualizado.")
+            while not validar_fecha(fecha):
+                print("Error: Formato inválido. Debe ser DD/MM/AAAA.")
+                fecha = input(
+                    "Nueva fecha del último pedido (DD/MM/AAAA): "
+                ).strip()
+
+            proveedor["fecha_ultimo_pedido"] = fecha
+
+            print("Proveedor actualizado correctamente.")
             return
 
     print("Proveedor no encontrado.")
 
 
-def eliminar_proveedor():
+def eliminar_proveedor(lista_proveedores):
 
-    id_buscar = int(
-        input("Ingrese ID del proveedor a eliminar: ")
-    )
+    if not lista_proveedores:
+        print("No hay proveedores registrados.")
+        return
 
-    for proveedor in proveedores:
+    try:
+        id_buscar = int(
+            input("Ingrese ID del proveedor a eliminar: ")
+        )
+
+    except ValueError:
+        print("Error: Debe ingresar un número válido.")
+        return
+
+    for proveedor in lista_proveedores:
 
         if proveedor["id"] == id_buscar:
 
-            proveedores.remove(proveedor)
+            print("\nProveedor encontrado:")
+            print(f"ID: {proveedor['id']}")
+            print(f"Nombre: {proveedor['nombre']}")
 
-            print("Proveedor eliminado.")
+            confirmacion = input(
+                "¿Desea eliminar este proveedor? (S/N): "
+            ).strip().upper()
+
+            if confirmacion == "S":
+
+                lista_proveedores.remove(proveedor)
+
+                print("Proveedor eliminado correctamente.")
+
+            else:
+                print("Eliminación cancelada.")
+
             return
 
     print("Proveedor no encontrado.")

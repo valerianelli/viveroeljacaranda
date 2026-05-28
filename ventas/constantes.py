@@ -46,7 +46,7 @@ def _construir_fecha(partes):
         return None
 
     try:
-        return date(anio, mes, dia)
+        return date(anio, mes, dia).isoformat()
     except ValueError:
         print("La fecha ingresada no es válida, intente de nuevo...")
         return None
