@@ -3,12 +3,13 @@ from clientes import menu_clientes
 from proveedores import menu_proveedores
 from ventas import menu_ventas
 from encargos import menu_encargos
+from archivos import cargar_datos, guardar_datos
 
-plantas = []
-clientes = []
-ventas = []
-proveedores = []
-encargos = []
+plantas = cargar_datos("plantas")
+clientes = cargar_datos("clientes")
+ventas = cargar_datos("ventas")
+proveedores = cargar_datos("proveedores")
+encargos = cargar_datos("encargos")
 
 
 def mostrar_opciones():
@@ -39,6 +40,11 @@ def menu_principal():
             case "5":
                 menu_encargos(encargos, clientes, proveedores)
             case "0":
+                guardar_datos(plantas, "plantas")
+                guardar_datos(clientes, "clientes")
+                guardar_datos(ventas, "ventas")
+                guardar_datos(proveedores, "proveedores")
+                guardar_datos(encargos, "encargos")
                 break
             case _:
                 print("Opción inválida, intente de nuevo...\n")

@@ -81,7 +81,7 @@ def _guardar_venta(ventas, id_cliente, items, total, forma_pago):
         {
             "id": nueva_id,
             "id_cliente": id_cliente,
-            "fecha": date.today(),
+            "fecha": date.today().isoformat(),
             "items": items,
             "total": total,
             "forma_pago": forma_pago,
