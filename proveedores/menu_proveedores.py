@@ -6,11 +6,12 @@ from .proveedores import (
     eliminar_proveedor
 )
 
-
 def menu_proveedores():
+
     opcion = ""
 
     while opcion != "0":
+
         print("\n===== MENÚ PROVEEDORES =====")
         print("1. Registrar proveedor")
         print("2. Listar proveedores")
@@ -19,25 +20,30 @@ def menu_proveedores():
         print("5. Eliminar proveedor")
         print("0. Salir")
 
-        opcion = input("Seleccione una opción: ")
+        opcion = input("Seleccione una opción: ").strip()
 
-        if opcion == "1":
-            registrar_proveedor(proveedores_sistema)
+        match opcion:
 
-        elif opcion == "2":
-            listar_proveedores(proveedores_sistema)
+            case "1":
+                registrar_proveedor(proveedores_sistema)
 
-        elif opcion == "3":
-            buscar_proveedor(proveedores_sistema)
+            case "2":
+                listar_proveedores(proveedores_sistema)
 
-        elif opcion == "4":
-            actualizar_proveedor(proveedores_sistema)
+            case "3":
+                buscar_proveedor(proveedores_sistema)
 
-        elif opcion == "5":
-            eliminar_proveedor(proveedores_sistema)
+            case "4":
+                actualizar_proveedor(proveedores_sistema)
 
-        elif opcion == "0":
-            print("Saliendo del menú proveedores.")
+            case "5":
+                eliminar_proveedor(proveedores_sistema)
 
-        else:
-            print("Opción inválida.")
+            case "0":
+                print("Saliendo del menú proveedores.")
+
+            case _:
+                print("Opción inválida.")
+
+
+menu_proveedores()
