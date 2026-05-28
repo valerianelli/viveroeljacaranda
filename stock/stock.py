@@ -1,13 +1,22 @@
 # Modulo stock de plantas #estructura de datos
 
-
-proximo_codigo_planta = 1
-
 # 2-Funciones de logica y vistas combinadas 
-def buscar_planta_por_codigo(plantas, codigo):
-    """Recorre la lista y devuelve la planta cuyo código coincide, o None."""
+
+def generar_proximo_id(plantas):
+    """Revisa las plantas existentes y devuelve el ID más alto + 1"""
+    if len(plantas) == 0:
+        return 1
+    
+    id_maximo = 0
+    for p in plantas:
+        if p["id"] > id_maximo:
+            id_maximo = p["id"]
+    return id_maximo + 1
+
+def buscar_planta_por_id(plantas, id):
+    """Recorre la lista y devuelve la planta cuyo ID coincide, o None."""
     for planta in plantas:
-        if planta["codigo"] == codigo:
+        if planta["id"] == id:
             return planta
     return None
 
@@ -32,14 +41,12 @@ def planta_ya_existe(plantas, nombre_comun, nombre_cientifico):
             return planta
     return None
 
-def registrar_nueva_planta(plantas):  
-    global proximo_codigo_planta
-    
+def registrar_nueva_planta(plantas): 
     nombre_comun, nombre_cientifico, categoria, sector, stock, precio, cuidados = cargar_planta()
     planta_existente = planta_ya_existe(plantas, nombre_comun, nombre_cientifico)
+    
     if planta_existente:
-
-        print(f"\n  ADVERTENCIA: Ya existe una planta llamada '{nombre_comun}' / '{nombre_cientifico}'.(Código {planta_existente['codigo']})")
+        print(f"\n  ADVERTENCIA: Ya existe una planta llamada '{nombre_comun}' / '{nombre_cientifico}'.(codigo identificador en el inventario: {planta_existente['id']})")
         print("Tiene estos datos:.\n ")
         mostrar_planta(planta_existente)
         decision = input("  ¿Desea cargarla como una planta nueva de todas formas? (s/n): ").strip().lower()
@@ -47,8 +54,11 @@ def registrar_nueva_planta(plantas):
             print("  Carga cancelada.")
             return
 
+    # Usamos la nueva función para obtener el ID real basado en los datos guardados
+    nuevo_id = generar_proximo_id(plantas)
+
     nueva_planta = {
-        "codigo": proximo_codigo_planta,
+        "id": nuevo_id,
         "nombre_comun": nombre_comun,
         "nombre_cientifico": nombre_cientifico,
         "categoria": categoria,
@@ -59,8 +69,7 @@ def registrar_nueva_planta(plantas):
     }
     
     plantas.append(nueva_planta)
-    print(f"\n Planta '{nombre_comun}' cargada correctamente con el código {proximo_codigo_planta}.")
-    proximo_codigo_planta += 1
+    print(f"\n Planta '{nombre_comun}' cargada correctamente con el código identificador {nuevo_id}.")
 
 def obtener_todo_el_inventario(plantas):
     if not plantas:
@@ -114,7 +123,7 @@ def elegir_planta_de_lista(resultados):
  
     print(f"\nSe encontraron {len(resultados)} plantas. Elija una:")
     for i, planta in enumerate(resultados, 1):
-        print(f"  {i}. {planta['nombre_comun']} / {planta['nombre_cientifico']} (código {planta['codigo']})")
+        print(f"  {i}. {planta['nombre_comun']} / {planta['nombre_cientifico']} (código identificador: {planta['id']})")
     print(f"  {len(resultados) + 1}. Cancelar")
  
     while True:
@@ -135,6 +144,7 @@ def actualizar_stock_planta(plantas):
         print("\nEl inventario está vacío.")
         return
  
+    # El usuario no conoce el código interno → primero busca por nombre
     busqueda = input("\nIngrese el nombre de la planta a actualizar: ")
     resultados = buscar_plantas_por_texto(plantas, busqueda)
  
@@ -142,12 +152,12 @@ def actualizar_stock_planta(plantas):
         print("No se encontró ninguna planta con ese nombre.")
         return
  
-   
+    # Si hay más de un resultado, el usuario elige cuál
     planta = elegir_planta_de_lista(resultados)
     if planta is None:
         return
  
-    print(f"\nPlanta seleccionada: {planta['nombre_comun']} (código {planta['codigo']}) — Stock actual: {planta['stock']}")
+    print(f"\nPlanta seleccionada: {planta['nombre_comun']} (código identificador {planta['id']}) — Stock actual: {planta['stock']}")
  
     cantidad = pedir_entero("Ingrese la cantidad: ")
     motivo = pedir_motivo()
@@ -162,15 +172,6 @@ def actualizar_stock_planta(plantas):
             print(f"  Éxito: Se restaron {cantidad} unidades por {motivo}. Stock actual: {planta['stock']}.")
         else:
             print(f"  Error: Stock insuficiente. Disponible: {planta['stock']}.")
-
-
-    # # función para eliminar planta por código, retorna True si se eliminó correctamente, False si no se encontró la planta
-    # def eliminar_planta_por_codigo(plantas,codigo):
-    #     planta = buscar_planta_por_codigo(plantas, codigo)
-    #     if planta:
-    #         plantas.remove(planta)
-    #         return True
-    #     return False
 
 
 # 3 - Validaciones 
@@ -264,14 +265,12 @@ def buscar_planta(plantas):
         for planta in resultados:
             mostrar_planta(planta)
 
-    
-
 def eliminar_planta(plantas):
     if not plantas:
         print("\nEl inventario está vacío.")
         return
  
-    #  usuario no conoce el código interno - primero busca por nombre
+    # El usuario no conoce el id interno → primero busca por nombre
     busqueda = input("\nIngrese el nombre de la planta que desea eliminar: ")
     resultados = buscar_plantas_por_texto(plantas, busqueda)
  
@@ -297,7 +296,7 @@ def eliminar_planta(plantas):
 
 def mostrar_planta(planta):
     print("\n--- DATOS DE LA PLANTA ---")
-    print(f"Código: {planta['codigo']}")
+    print(f"ID: {planta['id']}")
     print(f"Nombre común: {planta['nombre_comun']}")
     print(f"Nombre científico: {planta['nombre_cientifico']}")
     print(f"Categoría: {planta['categoria']}")
@@ -306,6 +305,3 @@ def mostrar_planta(planta):
     print(f"Precio unitario: ${planta['precio']:.2f}")
     print(f"Cuidados básicos: {planta['cuidados']}")
     print("---------------------------")
-
-
-
