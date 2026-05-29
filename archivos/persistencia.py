@@ -1,4 +1,7 @@
 import json
+import os
+
+RUTA_ARCHIVOS = "archivos"
 
 def cargar_datos(nombre_archivo):
     """
@@ -8,7 +11,8 @@ def cargar_datos(nombre_archivo):
     """
     try:
         nombre_archivo = nombre_archivo.lower()
-        with open(f"archivos/{nombre_archivo}.json", "r", encoding="utf-8") as archivo:
+        ruta = os.path.join(RUTA_ARCHIVOS, f"{nombre_archivo}.json")
+        with open(ruta, "r", encoding="utf-8") as archivo:
             return json.load(archivo)
     except FileNotFoundError:
         return []
@@ -25,5 +29,6 @@ def guardar_datos(datos, nombre_archivo):
     """
     nombre_archivo = nombre_archivo.lower()
     if nombre_archivo in ("ventas", "encargos", "clientes", "plantas", "proveedores"):
-        with open(f"archivos/{nombre_archivo}.json", "w", encoding="utf-8") as archivo:
+        ruta = os.path.join(RUTA_ARCHIVOS, f"{nombre_archivo}.json")
+        with open(ruta, "w", encoding="utf-8") as archivo:
             json.dump(datos, archivo, ensure_ascii=False, indent=2, default=str)
