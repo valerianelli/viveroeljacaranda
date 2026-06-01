@@ -14,7 +14,13 @@ def generar_proximo_id(lista_proveedores):
     if not lista_proveedores:
         return 1
 
-    return max(prov["id"] for prov in lista_proveedores)
+    id_maximo = 0
+
+    for prov in lista_proveedores:
+        if prov["id"] > id_maximo:
+            id_maximo = prov["id"]
+
+    return id_maximo + 1
 
 
 def registrar_proveedor(lista_proveedores):
@@ -44,7 +50,7 @@ def registrar_proveedor(lista_proveedores):
         fecha = input("Fecha inválida. Reintente: ").strip()
 
     proveedor = {
-        "id": generar_proximo_id(lista_proveedores) + 1,
+        "id": generar_proximo_id(lista_proveedores),
         "nombre": nombre,
         "telefono": telefono,
         "email": email,
@@ -76,7 +82,7 @@ def listar_proveedores(lista_proveedores):
 
 def buscar_proveedor(lista_proveedores):
 
-    texto = input("Buscar nombre o producto: ").lower()
+    texto = input("Buscar nombre o producto: ").lower().strip()
 
     encontrados = False
 
@@ -112,7 +118,15 @@ def actualizar_proveedor(lista_proveedores):
         if p["id"] == id_buscar:
 
             p["telefono"] = input("Nuevo teléfono: ").strip()
+
+            while not p["telefono"].isdigit():
+                p["telefono"] = input("Error. Solo números: ").strip()
+
             p["email"] = input("Nuevo email: ").strip()
+
+            while "@" not in p["email"]:
+                p["email"] = input("Email inválido: ").strip()
+
             p["localidad"] = input("Nueva localidad: ").strip()
 
             p["productos"] = [
@@ -150,7 +164,7 @@ def eliminar_proveedor(lista_proveedores):
         if p["id"] == id_buscar:
 
             print(f"Proveedor: {p['nombre']}")
-            confirmacion = input("Eliminar? (S/N): ").upper()
+            confirmacion = input("Eliminar? (S/N): ").strip().upper()
 
             if confirmacion == "S":
                 lista_proveedores.remove(p)
@@ -160,4 +174,5 @@ def eliminar_proveedor(lista_proveedores):
 
             return
 
+    print("No encontrado.")
     print("No encontrado.")
