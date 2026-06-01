@@ -1,7 +1,5 @@
 from datetime import datetime
 
-proximo_id_proveedor = 1
-
 
 def validar_fecha(fecha_str):
 
@@ -13,9 +11,21 @@ def validar_fecha(fecha_str):
         return False
 
 
-def registrar_proveedor(lista_proveedores):
+def generar_proximo_id(lista_proveedores):
 
-    global proximo_id_proveedor
+    if len(lista_proveedores) == 0:
+        return 1
+
+    id_maximo = 0
+
+    for proveedor in lista_proveedores:
+        if proveedor["id"] > id_maximo:
+            id_maximo = proveedor["id"]
+
+    return id_maximo + 1
+
+
+def registrar_proveedor(lista_proveedores):
 
     nombre = input("Ingrese nombre o razón social: ").strip()
 
@@ -58,7 +68,7 @@ def registrar_proveedor(lista_proveedores):
         ).strip()
 
     proveedor = {
-        "id": proximo_id_proveedor,
+        "id": generar_proximo_id(lista_proveedores),
         "nombre": nombre,
         "telefono": telefono,
         "email": email,
@@ -69,123 +79,7 @@ def registrar_proveedor(lista_proveedores):
 
     lista_proveedores.append(proveedor)
 
-    proximo_id_proveedor += 1
-
     print("Proveedor registrado correctamente.")
-
-
-def listar_proveedores(lista_proveedores):
-
-    if not lista_proveedores:
-        print("No hay proveedores registrados.")
-        return
-
-    for proveedor in lista_proveedores:
-
-        print("\n----------------------")
-        print(f"ID: {proveedor['id']}")
-        print(f"Nombre: {proveedor['nombre']}")
-        print(f"Teléfono: {proveedor['telefono']}")
-        print(f"Email: {proveedor['email']}")
-        print(f"Localidad: {proveedor['localidad']}")
-        print(f"Productos: {', '.join(proveedor['productos'])}")
-        print(f"Último pedido: {proveedor['fecha_ultimo_pedido']}")
-
-
-def buscar_proveedor(lista_proveedores):
-
-    busqueda = input(
-        "Buscar por nombre o producto: "
-    ).lower().strip()
-
-    encontrado = False
-
-    for proveedor in lista_proveedores:
-
-        if (
-            busqueda in proveedor["nombre"].lower()
-            or any(
-                busqueda in producto.lower()
-                for producto in proveedor["productos"]
-            )
-        ):
-
-            print("\n----------------------")
-            print(f"ID: {proveedor['id']}")
-            print(f"Nombre: {proveedor['nombre']}")
-            print(f"Teléfono: {proveedor['telefono']}")
-            print(f"Email: {proveedor['email']}")
-            print(f"Localidad: {proveedor['localidad']}")
-            print(f"Productos: {', '.join(proveedor['productos'])}")
-            print(f"Último pedido: {proveedor['fecha_ultimo_pedido']}")
-
-            encontrado = True
-
-    if not encontrado:
-        print("Proveedor no encontrado.")
-
-
-def actualizar_proveedor(lista_proveedores):
-
-    try:
-        id_buscar = int(
-            input("Ingrese ID del proveedor a actualizar: ")
-        )
-
-    except ValueError:
-        print("ID inválido.")
-        return
-
-    for proveedor in lista_proveedores:
-
-        if proveedor["id"] == id_buscar:
-
-            telefono = input("Nuevo teléfono: ").strip()
-
-            while not telefono.isdigit():
-                print("Error: El teléfono debe contener solo números.")
-                telefono = input("Nuevo teléfono: ").strip()
-
-            proveedor["telefono"] = telefono
-
-            email = input("Nuevo email: ").strip()
-
-            while "@" not in email:
-                print("Error: El email debe contener un '@'.")
-                email = input("Nuevo email: ").strip()
-
-            proveedor["email"] = email
-
-            proveedor["localidad"] = input(
-                "Nueva localidad: "
-            ).strip()
-
-            nuevos_productos = input(
-                "Nuevos productos (separados por coma): "
-            ).split(",")
-
-            proveedor["productos"] = [
-                producto.strip()
-                for producto in nuevos_productos
-                if producto.strip()
-            ]
-
-            fecha = input(
-                "Nueva fecha del último pedido (DD/MM/AAAA): "
-            ).strip()
-
-            while not validar_fecha(fecha):
-                print("Error: Formato inválido. Debe ser DD/MM/AAAA.")
-                fecha = input(
-                    "Nueva fecha del último pedido (DD/MM/AAAA): "
-                ).strip()
-
-            proveedor["fecha_ultimo_pedido"] = fecha
-
-            print("Proveedor actualizado correctamente.")
-            return
-
-    print("Proveedor no encontrado.")
 
 
 def eliminar_proveedor(lista_proveedores):
