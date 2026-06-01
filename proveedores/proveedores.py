@@ -21,15 +21,18 @@ def registrar_proveedor(lista_proveedores):
 
     nombre = input("Ingrese nombre o razón social: ").strip()
     while not nombre:
-        nombre = input("El nombre no puede estar vacío: ").strip()
+        print("El nombre no puede estar vacío.")
+        nombre = input("Ingrese nombre o razón social: ").strip()
 
     telefono = input("Ingrese teléfono: ").strip()
     while not telefono.isdigit():
-        telefono = input("Error. Solo números en teléfono: ").strip()
+        print("Error. Solo números en teléfono.")
+        telefono = input("Ingrese teléfono: ").strip()
 
     email = input("Ingrese email: ").strip()
     while "@" not in email:
-        email = input("Error. Email inválido: ").strip()
+        print("Error. Email inválido.")
+        email = input("Ingrese email: ").strip()
 
     localidad = input("Ingrese localidad: ").strip()
 
@@ -41,7 +44,8 @@ def registrar_proveedor(lista_proveedores):
 
     fecha = input("Fecha último pedido (DD/MM/AAAA): ").strip()
     while not validar_fecha(fecha):
-        fecha = input("Fecha inválida. Reintente: ").strip()
+        print("Fecha inválida. Debe ser DD/MM/AAAA.")
+        fecha = input("Fecha último pedido (DD/MM/AAAA): ").strip()
 
     proveedor = {
         "id": generar_proximo_id(lista_proveedores),
@@ -111,15 +115,15 @@ def actualizar_proveedor(lista_proveedores):
 
         if p["id"] == id_buscar:
 
-            telefono = input("Nuevo teléfono: ").strip()
-            while not telefono.isdigit():
-                telefono = input("Error. Solo números en teléfono: ").strip()
-            p["telefono"] = telefono
+            p["telefono"] = input("Nuevo teléfono: ").strip()
+            while not p["telefono"].isdigit():
+                print("Error. Solo números en teléfono.")
+                p["telefono"] = input("Nuevo teléfono: ").strip()
 
-            email = input("Nuevo email: ").strip()
-            while "@" not in email:
-                email = input("Error. Email inválido: ").strip()
-            p["email"] = email
+            p["email"] = input("Nuevo email: ").strip()
+            while "@" not in p["email"]:
+                print("Error. Email inválido.")
+                p["email"] = input("Nuevo email: ").strip()
 
             p["localidad"] = input("Nueva localidad: ").strip()
 
@@ -131,7 +135,8 @@ def actualizar_proveedor(lista_proveedores):
 
             fecha = input("Nueva fecha (DD/MM/AAAA): ").strip()
             while not validar_fecha(fecha):
-                fecha = input("Fecha inválida: ").strip()
+                print("Fecha inválida. Debe ser DD/MM/AAAA.")
+                fecha = input("Nueva fecha (DD/MM/AAAA): ").strip()
 
             p["fecha_ultimo_pedido"] = fecha
 
