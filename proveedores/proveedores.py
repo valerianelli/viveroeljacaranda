@@ -175,4 +175,4 @@ def eliminar_proveedor(lista_proveedores):
             return
 
     print("No encontrado.")
-    print("No encontrado.")
+
