@@ -14,7 +14,7 @@ def generar_proximo_id(lista_proveedores):
     if not lista_proveedores:
         return 1
 
-    return max(prov["id"] for prov in lista_proveedores)
+    return max(prov["id"] for prov in lista_proveedores) + 1
 
 
 def registrar_proveedor(lista_proveedores):
@@ -44,7 +44,7 @@ def registrar_proveedor(lista_proveedores):
         fecha = input("Fecha inválida. Reintente: ").strip()
 
     proveedor = {
-        "id": generar_proximo_id(lista_proveedores) + 1,
+        "id": generar_proximo_id(lista_proveedores),
         "nombre": nombre,
         "telefono": telefono,
         "email": email,
@@ -78,7 +78,7 @@ def buscar_proveedor(lista_proveedores):
 
     texto = input("Buscar nombre o producto: ").lower()
 
-    encontrados = False
+    encontrado = False
 
     for p in lista_proveedores:
 
@@ -93,9 +93,9 @@ def buscar_proveedor(lista_proveedores):
             print(f"Productos: {', '.join(p['productos'])}")
             print(f"Último pedido: {p['fecha_ultimo_pedido']}")
 
-            encontrados = True
+            encontrado = True
 
-    if not encontrados:
+    if not encontrado:
         print("No se encontraron resultados.")
 
 
@@ -111,8 +111,16 @@ def actualizar_proveedor(lista_proveedores):
 
         if p["id"] == id_buscar:
 
-            p["telefono"] = input("Nuevo teléfono: ").strip()
-            p["email"] = input("Nuevo email: ").strip()
+            telefono = input("Nuevo teléfono: ").strip()
+            while not telefono.isdigit():
+                telefono = input("Error. Solo números en teléfono: ").strip()
+            p["telefono"] = telefono
+
+            email = input("Nuevo email: ").strip()
+            while "@" not in email:
+                email = input("Error. Email inválido: ").strip()
+            p["email"] = email
+
             p["localidad"] = input("Nueva localidad: ").strip()
 
             p["productos"] = [
@@ -161,4 +169,3 @@ def eliminar_proveedor(lista_proveedores):
             return
 
     print("No encontrado.")
-
