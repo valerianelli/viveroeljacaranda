@@ -128,7 +128,7 @@ def actualizar_proveedor(lista_proveedores):
                 print("Error. Email inválido.")
                 p["email"] = input("Nuevo email: ").strip()
 
-           p["localidad"] = input("Nueva localidad: ").strip()
+            p["localidad"] = input("Nueva localidad: ").strip()
             while not p["localidad"]:
                 print("La localidad no puede estar vacía.")
                 p["localidad"] = input("Nueva localidad: ").strip()
