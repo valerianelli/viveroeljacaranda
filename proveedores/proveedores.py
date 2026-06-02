@@ -35,6 +35,9 @@ def registrar_proveedor(lista_proveedores):
         email = input("Ingrese email: ").strip()
 
     localidad = input("Ingrese localidad: ").strip()
+    while not localidad:
+        print("La localidad no puede estar vacía.")
+        localidad = input("Ingrese localidad: ").strip()
 
     productos = [
         p.strip()
