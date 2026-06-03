@@ -175,7 +175,12 @@ def actualizar_stock_planta(plantas):
 
 
 # 3 - Validaciones 
-
+def pedir_string(mensaje):
+    texto = input(mensaje).strip()
+    while not texto:
+        print("Error: Este campo no puede quedar vacío. Intente nuevamente.")
+        texto = input(mensaje).strip()
+    return texto
 
 def pedir_entero(mensaje):
     """Pide un número entero no negativo."""
@@ -242,15 +247,18 @@ def pedir_motivo():
 def cargar_planta():
     """Solicita al usuario los datos de una planta nueva y los devuelve como una tupla."""
     print("\n--- ALTA DE NUEVA PLANTA ---")
-    nombre_comun = input("Nombre común: ")
-    nombre_cientifico = input("Nombre científico: ")
+    
+    nombre_comun = pedir_string("Nombre común: ")
+    nombre_cientifico = pedir_string("Nombre científico: ")
+    
     categoria = pedir_categoria()
     sector = pedir_sector()
     stock = pedir_entero("Cantidad en stock: ")
     precio = pedir_float("Precio unitario: ")
-    cuidados = input("Cuidados básicos: ")
-    return nombre_comun, nombre_cientifico, categoria, sector, stock, precio, cuidados
     
+    cuidados = pedir_string("Cuidados básicos: ")
+    
+    return nombre_comun, nombre_cientifico, categoria, sector, stock, precio, cuidados
 def buscar_planta(plantas):
     if not plantas:
         print("\nEl inventario está vacío.")
