@@ -273,7 +273,7 @@ def _modificar_items(datos_nuevos, items_actuales, plantas):
 
 def _modificar_cantidad_item(item, planta, datos_nuevos):
     while True:
-        print(f"\nCantidad (actual): {item["cantidad"]}")
+        print(f"\nCantidad (actual): {item['cantidad']}")
         nueva_cantidad = input(
             "\nIngrese la nueva cantidad (0: volver, -1: siguiente, vacío: eliminar): "
         )
