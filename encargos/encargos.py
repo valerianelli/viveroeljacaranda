@@ -1,56 +1,84 @@
 from datetime import date
 
 def generar_proximo_id(lista_encargos):
-    """Genera un ID autoincremental único (pág. 6)"""
-    if len(lista_encargos) == 0:
+    if not lista_encargos:
         return 1
-    
-    id_maximo = 0
-    for e in lista_encargos:
-        if e["id"] > id_maximo:
-            id_maximo = e["id"]
-    return id_maximo + 1
+    return maximo_id(lista_encargos) + 1
 
-def registrar_encargo(lista_encargos, id_cliente, id_proveedor, descripcion, cantidad, sena):
-    """
-    Registra un encargo en la lista recibida.
-    Valida tipos de datos sin usar isinstance.
-    """
-    # Validaciones técnicas (pág. 6)
-    if type(id_cliente) != int or type(id_proveedor) != int:
-        return "Error: Los IDs deben ser números enteros."
-    if type(cantidad) != int or cantidad <= 0:
-        return "Error: La cantidad debe ser un entero positivo."
-    if type(sena) != float and type(sena) != int:
-        return "Error: La seña debe ser un valor numérico."
+def maximo_id(lista_encargos):
+    id_maximo = lista_encargos[0]["id"]
+    tail = lista_encargos[1:]
+    for encargo in tail:
+        encargo_id = encargo["id"]
+        if encargo_id > id_maximo:
+            id_maximo = encargo_id
+    return id_maximo
 
+def registrar_encargo(lista_encargos, id_cliente, id_proveedor, descripcion, cantidad, sena, fecha_estimada):
     nuevo = {
         "id": generar_proximo_id(lista_encargos),
         "id_cliente": id_cliente,
         "id_proveedor": id_proveedor,
-        "descripcion": str(descripcion),
+        "descripcion": descripcion,
         "cantidad": cantidad,
-        "fecha_pedido": date.today(),
-        "fecha_estimada_llegada": date.today(), # Se asume fecha actual por defecto
+        "fecha_pedido": str(date.today()),
+        "fecha_estimada_llegada": fecha_estimada,
         "estado": "pedido",
-        "sena": float(sena)
+        "sena": sena
     }
-    
     lista_encargos.append(nuevo)
     return nuevo
 
+
 def cambiar_estado(lista_encargos, id_buscado, nuevo_estado):
-    """Modifica el estado de un encargo existente"""
-    for e in lista_encargos:
-        if e["id"] == id_buscado:
-            e["estado"] = nuevo_estado
+    for encargo in lista_encargos:
+        if encargo["id"] == id_buscado:
+            encargo["estado"] = nuevo_estado
             return True
     return False
 
-def eliminar_encargo_fisico(lista_encargos, id_buscado):
-    """Elimina el registro de la lista"""
-    for i in range(len(lista_encargos)):
-        if lista_encargos[i]["id"] == id_buscado:
-            lista_encargos.pop(i)
+
+def eliminar_encargo(lista_encargos, id_buscado):
+    for indice, encargo in enumerate(lista_encargos):
+        if encargo["id"] == id_buscado:
+            lista_encargos.pop(indice)
             return True
     return False
+
+
+def buscar_por_cliente(lista_encargos, id_cliente):
+    resultado = []
+    for encargo in lista_encargos:
+        if encargo["id_cliente"] == id_cliente:
+            resultado.append(encargo)
+    return resultado
+
+
+def buscar_por_proveedor(lista_encargos, id_proveedor):
+    resultado = []
+    for encargo in lista_encargos:
+        if encargo["id_proveedor"] == id_proveedor:
+            resultado.append(encargo)
+    return resultado
+
+
+def buscar_por_fecha(lista_encargos, fecha):
+    resultado = []
+    for encargo in lista_encargos:
+        if (encargo["fecha_pedido"] == fecha or 
+            encargo["fecha_estimada_llegada"] == fecha):
+            resultado.append(encargo)
+    return resultado
+
+def obtener_cliente_por_id(id_cliente, lista_clientes):
+    for cliente in lista_clientes:
+        if cliente["id"] == id_cliente:
+            return cliente
+    return None
+
+
+def obtener_proveedor_por_id(id_proveedor, lista_proveedores):
+    for proveedor in lista_proveedores:
+        if proveedor["id"] == id_proveedor:
+            return proveedor
+    return None
