@@ -3,47 +3,123 @@ def generar_id_cliente(clientes):
         return 1
     return max(cliente["id"] for cliente in clientes) + 1
 
+def pedir_dni():
+    dni = input("DNI: ")
+
+    while not dni.isdigit():
+        print("Error: el DNI debe contener solo números.")
+        dni = input("Ingrese DNI nuevamente: ")
+
+    return dni
+
+
+def pedir_nombre_completo():
+    nombre = input("Nombre completo: ")
+
+    while nombre.strip() == "":
+        print("Error: el nombre no puede quedar vacío.")
+        nombre = input("Ingrese nombre completo nuevamente: ")
+
+    return nombre
+
+
+def pedir_telefono():
+    telefono = input("Teléfono: ")
+
+    while not telefono.isdigit():
+        print("Error: el teléfono debe contener solo números.")
+        telefono = input("Ingrese teléfono nuevamente: ")
+
+    return telefono
+
+
+def pedir_email():
+    email = input("Email opcional: ")
+
+    while email != "" and "@" not in email:
+        print("Error: email inválido. Debe contener '@' o dejarse vacío.")
+        email = input("Ingrese email nuevamente: ")
+
+    return email
+
+
+def pedir_tipo_cliente():
+    opcion_tipo = ""
+
+    while opcion_tipo not in ["1", "2", "3", "4"]:
+        print("\nTipo de cliente:")
+        print("1. Particular")
+        print("2. Paisajista")
+        print("3. Empresa")
+        print("4. Vivero amigo")
+
+        opcion_tipo = input("Seleccione una opción: ")
+
+        if opcion_tipo not in ["1", "2", "3", "4"]:
+            print("Error: opción incorrecta. Vuelva a intentarlo.")
+
+    if opcion_tipo == "1":
+        return "particular"
+    elif opcion_tipo == "2":
+        return "paisajista"
+    elif opcion_tipo == "3":
+        return "empresa"
+    else:
+        return "vivero amigo"
+
+
+def pedir_confirmacion():
+    confirmacion = input("¿Está seguro que desea eliminar este cliente? s/n: ").lower()
+
+    while confirmacion not in ["s", "n"]:
+        print("Error: debe ingresar 's' para sí o 'n' para no.")
+        confirmacion = input("Ingrese nuevamente s/n: ").lower()
+
+    return confirmacion
+
+
+def buscar_cliente_por_dni(clientes, dni):
+    for cliente in clientes:
+        if cliente["dni"] == dni:
+            return cliente
+    return None
+
+
+def existe_dni(clientes, dni):
+    cliente = buscar_cliente_por_dni(clientes, dni)
+
+    if cliente is None:
+        return False
+    else:
+        return True
+
+
+def mostrar_cliente(cliente):
+    print("-------------------------")
+    print("ID:", cliente["id"])
+    print("DNI:", cliente["dni"])
+    print("Nombre completo:", cliente["nombre_completo"])
+    print("Teléfono:", cliente["telefono"])
+    print("Email:", cliente["email"])
+    print("Tipo:", cliente["tipo"])
+    print("Notas:", cliente["notas"])
+
 
 def cargar_cliente(clientes):
     print("\n--- Registrar cliente ---")
 
     id_cliente = generar_id_cliente(clientes)
 
-    dni = input("DNI: ")
+    dni = pedir_dni()
 
-    for cliente in clientes:
-        if cliente["dni"] == dni:
-            print("Ya existe un cliente con ese DNI.")
-            return
+    while existe_dni(clientes, dni):
+        print("Error: ya existe un cliente con ese DNI.")
+        dni = pedir_dni()
 
-    nombre_completo = input("Nombre completo: ")
-    telefono = input("Teléfono: ")
-
-    email = input("Email opcional: ")
-    if email != "" and "@" not in email:
-        print("Email inválido. Debe contener '@'.")
-        return
-
-    print("Tipo de cliente:")
-    print("1. Particular")
-    print("2. Paisajista")
-    print("3. Empresa")
-    print("4. Vivero amigo")
-
-    opcion_tipo = input("Seleccione una opción: ")
-
-    if opcion_tipo == "1":
-        tipo = "particular"
-    elif opcion_tipo == "2":
-        tipo = "paisajista"
-    elif opcion_tipo == "3":
-        tipo = "empresa"
-    elif opcion_tipo == "4":
-        tipo = "vivero amigo"
-    else:
-        print("Opción incorrecta.")
-        return
-
+    nombre_completo = pedir_nombre_completo()
+    telefono = pedir_telefono()
+    email = pedir_email()
+    tipo = pedir_tipo_cliente()
     notas = input("Notas: ")
 
     cliente = {
@@ -68,34 +144,31 @@ def listar_clientes(clientes):
         return
 
     for cliente in clientes:
-        print("-------------------------")
-        print("ID:", cliente["id"])
-        print("DNI:", cliente["dni"])
-        print("Nombre completo:", cliente["nombre_completo"])
-        print("Teléfono:", cliente["telefono"])
-        print("Email:", cliente["email"])
-        print("Tipo:", cliente["tipo"])
-        print("Notas:", cliente["notas"])
-
-
-def buscar_cliente_por_dni(clientes, dni):
-    for cliente in clientes:
-        if cliente["dni"] == dni:
-            return cliente
-    return None
+        mostrar_cliente(cliente)
 
 
 def buscar_cliente(clientes):
     print("\n--- Buscar cliente ---")
-    print("1. Buscar por DNI")
-    print("2. Buscar por nombre")
 
-    opcion = input("Seleccione una opción: ")
+    if len(clientes) == 0:
+        print("No hay clientes registrados.")
+        return
+
+    opcion = ""
+
+    while opcion not in ["1", "2"]:
+        print("1. Buscar por DNI")
+        print("2. Buscar por nombre")
+
+        opcion = input("Seleccione una opción: ")
+
+        if opcion not in ["1", "2"]:
+            print("Error: opción incorrecta. Vuelva a intentarlo.")
 
     encontrado = False
 
     if opcion == "1":
-        dni = input("Ingrese DNI: ")
+        dni = pedir_dni()
 
         for cliente in clientes:
             if cliente["dni"] == dni:
@@ -105,39 +178,28 @@ def buscar_cliente(clientes):
     elif opcion == "2":
         nombre = input("Ingrese nombre o parte del nombre: ").lower()
 
+        while nombre.strip() == "":
+            print("Error: debe ingresar un nombre o parte del nombre.")
+            nombre = input("Ingrese nombre o parte del nombre nuevamente: ").lower()
+
         for cliente in clientes:
             if nombre in cliente["nombre_completo"].lower():
                 mostrar_cliente(cliente)
                 encontrado = True
 
-    else:
-        print("Opción incorrecta.")
-        return
-
     if not encontrado:
         print("No se encontraron clientes.")
 
 
-def mostrar_cliente(cliente):
-    print("-------------------------")
-    print("ID:", cliente["id"])
-    print("DNI:", cliente["dni"])
-    print("Nombre completo:", cliente["nombre_completo"])
-    print("Teléfono:", cliente["telefono"])
-    print("Email:", cliente["email"])
-    print("Tipo:", cliente["tipo"])
-    print("Notas:", cliente["notas"])
-
-
 def modificar_cliente(clientes):
+    print("\n--- Modificar cliente ---")
 
-    dni = input("Ingrese el DNI del cliente a modificar: ")
+    if len(clientes) == 0:
+        print("No hay clientes registrados.")
+        return
 
-    cliente_encontrado = None
-
-    for cliente in clientes:
-        if cliente["dni"] == dni:
-            cliente_encontrado = cliente
+    dni = pedir_dni()
+    cliente_encontrado = buscar_cliente_por_dni(clientes, dni)
 
     if cliente_encontrado is None:
         print("Cliente no encontrado.")
@@ -146,54 +208,62 @@ def modificar_cliente(clientes):
     seguir_modificando = True
 
     while seguir_modificando:
+        mostrar_cliente(cliente_encontrado)
 
         print("\n--- MODIFICAR CLIENTE ---")
-        print("1. Nombre")
-        print("2. Teléfono")
-        print("3. Email")
-        print("4. Tipo")
-        print("5. Notas")
+        print("1. DNI")
+        print("2. Nombre")
+        print("3. Teléfono")
+        print("4. Email")
+        print("5. Tipo")
+        print("6. Notas")
         print("0. Finalizar modificación")
 
         opcion = input("Seleccione una opción: ")
 
         if opcion == "1":
+            nuevo_dni = pedir_dni()
 
-            nuevo_nombre = input("Ingrese nuevo nombre: ")
+            while nuevo_dni != cliente_encontrado["dni"] and existe_dni(clientes, nuevo_dni):
+                print("Error: ya existe otro cliente con ese DNI.")
+                nuevo_dni = pedir_dni()
+
+            if nuevo_dni == cliente_encontrado["dni"]:
+                print("El DNI ingresado es el mismo que ya tenía el cliente.")
+            else:
+                cliente_encontrado["dni"] = nuevo_dni
+                print("DNI actualizado.")
+
+        elif opcion == "2":
+            nuevo_nombre = pedir_nombre_completo()
             cliente_encontrado["nombre_completo"] = nuevo_nombre
             print("Nombre actualizado.")
 
-        elif opcion == "2":
-
-            nuevo_telefono = input("Ingrese nuevo teléfono: ")
+        elif opcion == "3":
+            nuevo_telefono = pedir_telefono()
             cliente_encontrado["telefono"] = nuevo_telefono
             print("Teléfono actualizado.")
 
-        elif opcion == "3":
-
-            nuevo_email = input("Ingrese nuevo email: ")
+        elif opcion == "4":
+            nuevo_email = pedir_email()
             cliente_encontrado["email"] = nuevo_email
             print("Email actualizado.")
 
-        elif opcion == "4":
-
-            nuevo_tipo = input("Ingrese nuevo tipo: ")
+        elif opcion == "5":
+            nuevo_tipo = pedir_tipo_cliente()
             cliente_encontrado["tipo"] = nuevo_tipo
             print("Tipo actualizado.")
 
-        elif opcion == "5":
-
+        elif opcion == "6":
             nuevas_notas = input("Ingrese nuevas notas: ")
             cliente_encontrado["notas"] = nuevas_notas
             print("Notas actualizadas.")
 
         elif opcion == "0":
-
             print("Modificación finalizada.")
             seguir_modificando = False
 
         else:
-
             print("Opción incorrecta. Vuelva a ingresar una opción.")
             continue
 
@@ -201,7 +271,11 @@ def modificar_cliente(clientes):
 def eliminar_cliente(clientes):
     print("\n--- Eliminar cliente ---")
 
-    dni = input("Ingrese el DNI del cliente a eliminar: ")
+    if len(clientes) == 0:
+        print("No hay clientes registrados.")
+        return
+
+    dni = pedir_dni()
     cliente = buscar_cliente_por_dni(clientes, dni)
 
     if cliente is None:
@@ -210,9 +284,9 @@ def eliminar_cliente(clientes):
 
     mostrar_cliente(cliente)
 
-    confirmacion = input("¿Está seguro que desea eliminar este cliente? s/n: ")
+    confirmacion = pedir_confirmacion()
 
-    if confirmacion.lower() == "s":
+    if confirmacion == "s":
         clientes.remove(cliente)
         print("Cliente eliminado correctamente.")
     else:
