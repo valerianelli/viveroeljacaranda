@@ -1,14 +1,18 @@
 from encargos.encargos import (
     registrar_encargo, cambiar_estado, eliminar_encargo,
     buscar_por_cliente, buscar_por_proveedor, buscar_por_fecha,
-    obtener_cliente_por_id, obtener_proveedor_por_id
+    obtener_cliente_por_id, obtener_proveedor_por_id, dame_activos
 )
 from ventas.constantes import parsear_fecha
 
 
-def mostrar_encargo(encargo):
+def mostrar_encargo(encargo, lista_clientes=None, lista_proveedores=None):
+    cliente = obtener_cliente_por_id(encargo["id_cliente"], lista_clientes) if lista_clientes else None
+    proveedor = obtener_proveedor_por_id(encargo["id_proveedor"], lista_proveedores) if lista_proveedores else None
+    nombre_cliente = f"{cliente['nombre_completo']} (ID: {encargo['id_cliente']})" if cliente else f"Cliente ID: {encargo['id_cliente']}"
+    nombre_proveedor = f"{proveedor['nombre']} (ID: {encargo['id_proveedor']})" if proveedor else f"Proveedor ID: {encargo['id_proveedor']}"
     print(f"  [{encargo['id']}] {encargo['descripcion']} x{encargo['cantidad']}")
-    print(f"       Cliente ID: {encargo['id_cliente']} | Proveedor ID: {encargo['id_proveedor']}")
+    print(f"       {nombre_cliente} | {nombre_proveedor}")
     print(f"       Pedido: {encargo['fecha_pedido']} | Llegada estimada: {encargo['fecha_estimada_llegada']}")
     print(f"       Estado: {encargo['estado'].upper()} | Seña: ${encargo['sena']:.2f}")
 
@@ -127,13 +131,6 @@ def _mostrar_datos_cliente(id_cliente, lista_clientes):
             print(f"    Email: {cliente['email']}")
 
 
-def dame_activos(lista_encargos):
-    resultados = []
-    for encargo in lista_encargos:
-        if encargo["estado"] not in ("entregado", "cancelado"):
-            resultados.append(encargo)
-    return resultados
-
 def menu_encargos(lista_encargos, lista_clientes, lista_proveedores):
     while True:
         print("\n═══════════════════════════════════════════════════")
@@ -144,6 +141,7 @@ def menu_encargos(lista_encargos, lista_clientes, lista_proveedores):
         print("3. Buscar encargos")
         print("4. Actualizar estado")
         print("5. Cancelar un encargo")
+        print("6. Eliminar definitivamente un encargo")
         print("9. Volver a la pantalla principal")
 
         opcion = input("\n¿Qué querés hacer? ")
@@ -183,7 +181,7 @@ def menu_encargos(lista_encargos, lista_clientes, lista_proveedores):
             else:
                 for encargo in activos:
                     print()
-                    mostrar_encargo(encargo)
+                    mostrar_encargo(encargo, lista_clientes, lista_proveedores)
 
         elif opcion == "3":
             print("\n--- BUSCAR ENCARGOS ---")
@@ -203,7 +201,7 @@ def menu_encargos(lista_encargos, lista_clientes, lista_proveedores):
                 else:
                     for encargo in resultados:
                         print()
-                        mostrar_encargo(encargo)
+                        mostrar_encargo(encargo, lista_clientes, lista_proveedores)
 
             elif opcion_submenu == "2":
                 if not lista_proveedores:
@@ -216,7 +214,7 @@ def menu_encargos(lista_encargos, lista_clientes, lista_proveedores):
                 else:
                     for encargo in resultados:
                         print()
-                        mostrar_encargo(encargo)
+                        mostrar_encargo(encargo, lista_clientes, lista_proveedores)
 
             elif opcion_submenu == "3":
                 print("Fecha a buscar (puede ser fecha de pedido o de llegada estimada):")
@@ -227,7 +225,7 @@ def menu_encargos(lista_encargos, lista_clientes, lista_proveedores):
                 else:
                     for encargo in resultados:
                         print()
-                        mostrar_encargo(encargo)
+                        mostrar_encargo(encargo, lista_clientes, lista_proveedores)
 
             else:
                 print("Opción inválida. Volvé a intentar.")
@@ -243,7 +241,7 @@ def menu_encargos(lista_encargos, lista_clientes, lista_proveedores):
             for encargo in lista_encargos:
                 if encargo["id"] == id_encargo_ingresado:
                     print()
-                    mostrar_encargo(encargo)
+                    mostrar_encargo(encargo, lista_clientes, lista_proveedores)
                     break
 
             nuevo_estado = _pedir_estado()
@@ -270,7 +268,7 @@ def menu_encargos(lista_encargos, lista_clientes, lista_proveedores):
             for encargo in lista_encargos:
                 if encargo["id"] == id_encargo_ingresado:
                     print("\nEncargo a cancelar:")
-                    mostrar_encargo(encargo)
+                    mostrar_encargo(encargo, lista_clientes, lista_proveedores)
                     break
 
             conf = input("\n¿Estás seguro de que querés cancelar este encargo? (s/n): ").lower()
@@ -281,6 +279,29 @@ def menu_encargos(lista_encargos, lista_clientes, lista_proveedores):
                     print("\nX No se encontró el encargo.")
             else:
                 print("\nCancelación cancelada.")
+
+        elif opcion == "6":
+            print("\n--- ELIMINAR ENCARGO ---")
+            if not lista_encargos:
+                print("\nNo hay encargos registrados.")
+                continue
+
+            id_encargo_ingresado = _pedir_id_encargo(lista_encargos)
+
+            for encargo in lista_encargos:
+                if encargo["id"] == id_encargo_ingresado:
+                    print("\nEncargo a eliminar:")
+                    mostrar_encargo(encargo, lista_clientes, lista_proveedores)
+                    break
+
+            conf = input("\n¿Estás completamente seguro? Esta acción no se puede deshacer (s/n): ").lower()
+            if conf == "s":
+                if eliminar_encargo(lista_encargos, id_encargo_ingresado):
+                    print("\n✓ Encargo eliminado del sistema.")
+                else:
+                    print("\nX No se encontró el encargo.")
+            else:
+                print("\nEliminación cancelada.")
 
         elif opcion == "9":
             break

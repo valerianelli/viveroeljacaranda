@@ -82,3 +82,11 @@ def obtener_proveedor_por_id(id_proveedor, lista_proveedores):
         if proveedor["id"] == id_proveedor:
             return proveedor
     return None
+
+
+def dame_activos(lista_encargos):
+    resultados = []
+    for encargo in lista_encargos:
+        if encargo["estado"] not in ("entregado", "cancelado"):
+            resultados.append(encargo)
+    return resultados
