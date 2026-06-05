@@ -32,7 +32,7 @@ def menu_principal():
             case "1":
                 menu_stock(plantas)
             case "2":
-                menu_clientes(clientes)
+                menu_clientes(clientes, ventas, plantas, encargos)
             case "3":
                 menu_ventas(ventas, clientes, plantas)
             case "4":
