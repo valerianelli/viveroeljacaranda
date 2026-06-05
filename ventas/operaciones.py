@@ -10,7 +10,7 @@ from .constantes import (
     imprimir_exito,
 )
 from .inputs import pedir_cliente, pedir_planta, pedir_cantidad, pedir_forma_pago
-from .visualizacion import mostrar_ventas, imprimir_items
+from .visualizacion import mostrar_ventas, imprimir_items, imprimir_venta
 
 # ─────────────────────────────────────────────
 #  Registrar
@@ -58,13 +58,19 @@ def _agregar_items(plantas):
         if not cantidad:
             break
 
-        items.append(
-            {
-                "id_planta": planta["id"],
-                "cantidad": cantidad,
-                "precio_unit": planta["precio"],
-            }
+        item_existente = next(
+            (i for i in items if i["id_planta"] == planta["id"]), None
         )
+        if item_existente:
+            item_existente["cantidad"] += cantidad
+        else:
+            items.append(
+                {
+                    "id_planta": planta["id"],
+                    "cantidad": cantidad,
+                    "precio_unit": planta["precio"],
+                }
+            )
 
     return items
 
@@ -170,7 +176,17 @@ def modificar_venta(ventas, clientes, plantas):
             continue
 
         datos_nuevos = _pedir_datos_nuevos(venta, clientes, plantas)
-        if not datos_nuevos:
+        if datos_nuevos is None:
+            break
+
+        if datos_nuevos == {}:
+            print(
+                "\nEliminó todas las plantas de esta venta.\nSi confirma, la venta se borrará."
+            )
+            if pedir_confirmacion("¿Confirmar? (s/n): "):
+                restaurar_stock(venta["items"], plantas)
+                ventas.remove(venta)
+                imprimir_exito("Venta borrada correctamente!")
             break
 
         if pedir_confirmacion("¿Confirmar modificación? (s/n): "):
@@ -184,6 +200,7 @@ def _pedir_datos_nuevos(venta, clientes, plantas):
     """
     Recorre cada campo de la venta y ofrece al usuario modificarlo.
     Retorna un dict con los nuevos valores, o None si el usuario canceló.
+    Retorna dict vacio si el usuario borro todos los items.
     """
     datos_nuevos = {}
 
@@ -198,6 +215,8 @@ def _pedir_datos_nuevos(venta, clientes, plantas):
                 resultado = _modificar_fecha(datos_nuevos, valor)
             case "items":
                 resultado = _modificar_items(datos_nuevos, valor, plantas)
+                if not datos_nuevos["items"]:
+                    return {}  # señal especial: items vacios
             case "total":
                 _recalcular_total(datos_nuevos, valor)
                 resultado = True
@@ -248,7 +267,9 @@ def _modificar_fecha(datos_nuevos, valor_actual):
 
         fecha_nueva = parsear_fecha(fecha_nueva)
         if not fecha_nueva:
-            print("Formato de fecha no reconocido, intente con dd/mm/yyyy o yyyy-mm-dd...")
+            print(
+                "Formato de fecha no reconocido, intente con dd/mm/yyyy o yyyy-mm-dd..."
+            )
             continue
 
         datos_nuevos["fecha"] = fecha_nueva
@@ -259,6 +280,9 @@ def _modificar_items(datos_nuevos, items_actuales, plantas):
     datos_nuevos["items"] = deepcopy(items_actuales)
 
     while True:
+        if not datos_nuevos["items"]:
+            return False
+
         print("\nPlantas vendidas (actual):")
         imprimir_items(datos_nuevos["items"], plantas)
 
@@ -274,9 +298,13 @@ def _modificar_items(datos_nuevos, items_actuales, plantas):
         if id_planta == 0:
             return False
 
-        item = next((i for i in datos_nuevos["items"] if i["id_planta"] == id_planta), None)
+        item = next(
+            (i for i in datos_nuevos["items"] if i["id_planta"] == id_planta), None
+        )
         if not item:
-            print("No se encontró una planta con ese ID en la venta, intente de nuevo...")
+            print(
+                "No se encontró una planta con ese ID en la venta, intente de nuevo..."
+            )
             continue
 
         planta = buscar_por_id(plantas, id_planta)
@@ -291,7 +319,7 @@ def _modificar_cantidad_item(item, planta, datos_nuevos):
     while True:
         print(f"\nCantidad (actual): {item['cantidad']}")
         nueva_cantidad = input(
-            "\nIngrese la nueva cantidad (0: volver, -1: siguiente, vacío: eliminar): "
+            "Ingrese la nueva cantidad (0: volver, -1: siguiente, vacío: eliminar): "
         )
 
         if nueva_cantidad == "":
@@ -311,9 +339,11 @@ def _modificar_cantidad_item(item, planta, datos_nuevos):
             print("La cantidad debe ser un número positivo, intente de nuevo...")
             continue
 
-        if nueva_cantidad > planta["stock"]:
+        stock_total = planta["stock"] + item["cantidad"]
+
+        if nueva_cantidad > stock_total:
             print(
-                f"La cantidad supera el stock disponible ({planta['stock']}), intente de nuevo..."
+                f"La cantidad supera el stock disponible ({stock_total}), intente de nuevo..."
             )
             continue
 
@@ -349,7 +379,9 @@ def _modificar_forma_pago(datos_nuevos, valor_actual):
             )
             continue
         if not forma_pago_nueva in FORMAS_PAGO:
-            print(f"Forma de pago inválida, las opciones son: {', '.join(FORMAS_PAGO)}...")
+            print(
+                f"Forma de pago inválida, las opciones son: {', '.join(FORMAS_PAGO)}..."
+            )
             continue
 
         datos_nuevos["forma_pago"] = forma_pago_nueva
@@ -392,7 +424,9 @@ def _ajustar_stock_por_modificacion(items_viejos, items_nuevos, plantas):
 
     for item_nuevo in items_nuevos:
         # Si no existe un item viejo con el mismo id_planta, entonces es nuevo (True)
-        es_nuevo = not any(i["id_planta"] == item_nuevo["id_planta"] for i in items_viejos)
+        es_nuevo = not any(
+            i["id_planta"] == item_nuevo["id_planta"] for i in items_viejos
+        )
         if es_nuevo:
             planta = buscar_por_id(plantas, item_nuevo["id_planta"])
             if planta:
@@ -426,16 +460,19 @@ def eliminar_venta(ventas, plantas):
             print("No se encontró una venta con ese ID, intente de nuevo...")
             continue
 
+        print()
+        imprimir_venta(venta, plantas)
+
         if not pedir_confirmacion("¿Confirmar borrado? (s/n): "):
             break
 
-        _restaurar_stock(venta["items"], plantas)
+        restaurar_stock(venta["items"], plantas)
         ventas.remove(venta)
         imprimir_exito("Venta borrada correctamente!")
         break
 
 
-def _restaurar_stock(items, plantas):
+def restaurar_stock(items, plantas):
     """Devuelve al stock de cada planta la cantidad que estaba en la venta eliminada."""
     for item in items:
         planta = buscar_por_id(plantas, item["id_planta"])
