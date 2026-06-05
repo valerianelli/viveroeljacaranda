@@ -16,7 +16,6 @@ def menu_clientes(clientes, ventas, plantas, encargos):
         print("3. Buscar cliente")
         print("4. Modificar cliente")
         print("5. Eliminar cliente")
-        print("6. Volver al menú principal")
         print("0. Volver al menú principal")
 
         opcion = input("Seleccione una opción: ")
@@ -32,8 +31,6 @@ def menu_clientes(clientes, ventas, plantas, encargos):
                 modificar_cliente(clientes)
             case "5":
                 eliminar_cliente(clientes)
-            case "6":
-                print("Volviendo al menú principal...")
             case "0":
                 seguir = False
             case _:

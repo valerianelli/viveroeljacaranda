@@ -244,9 +244,6 @@ def modificar_cliente(clientes):
 
         opcion = input("Seleccione una opción: ")
 
-        if opcion == "1":
-            nuevo_dni = pedir_dni()
-
         match opcion:
             case "1":
                 nuevo_dni = pedir_dni()
