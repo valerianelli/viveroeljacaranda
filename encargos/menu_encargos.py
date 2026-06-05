@@ -142,7 +142,7 @@ def menu_encargos(lista_encargos, lista_clientes, lista_proveedores):
         print("4. Actualizar estado")
         print("5. Cancelar un encargo")
         print("6. Eliminar definitivamente un encargo")
-        print("0. Volver a la pantalla principal")
+        print("0. Volver al menu principal")
 
         opcion = input("\n¿Qué querés hacer? ")
 

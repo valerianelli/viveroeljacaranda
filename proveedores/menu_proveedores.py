@@ -20,7 +20,7 @@ def menu_proveedores(lista_proveedores):
         print("3. Buscar proveedor")
         print("4. Actualizar proveedor")
         print("5. Eliminar proveedor")
-        print("0. Salir\n")
+        print("0. Volver al menu principal\n")
 
         opcion = input("Seleccione una opción: ").strip()
 
