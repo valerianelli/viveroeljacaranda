@@ -96,6 +96,10 @@ def _guardar_venta(ventas, id_cliente, items, total, forma_pago):
 
 def buscar_venta(ventas, clientes, plantas):
     """Permite buscar ventas por DNI del cliente o por fecha."""
+    if not ventas:
+        print("Aún no hay ventas registradas.")
+        return
+
     while True:
         entrada = input(
             "\nIngrese el DNI del cliente o la fecha de la venta (0: volver): "
@@ -137,6 +141,10 @@ def _buscar_por_fecha(ventas, plantas, entrada):
 
 def modificar_venta(ventas, clientes, plantas):
     """Permite modificar los datos de una venta existente."""
+    if not ventas:
+        print("Aún no hay ventas registradas.")
+        return
+
     while True:
         id_venta = input("\nIngrese ID de la venta (0: volver): ")
 
@@ -390,6 +398,10 @@ def _ajustar_stock_por_modificacion(items_viejos, items_nuevos, plantas):
 
 def eliminar_venta(ventas, plantas):
     """Permite eliminar una venta existente y restaura el stock correspondiente."""
+    if not ventas:
+        print("Aún no hay ventas registradas.")
+        return
+
     while True:
         id_venta = input("\nIngrese ID de la venta (0: volver): ")
 
