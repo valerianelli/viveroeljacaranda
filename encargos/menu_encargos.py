@@ -134,15 +134,15 @@ def _mostrar_datos_cliente(id_cliente, lista_clientes):
 def menu_encargos(lista_encargos, lista_clientes, lista_proveedores):
     while True:
         print("\n═══════════════════════════════════════════════════")
-        print("                ENCARGOS ESPECIALES                ")
-        print("═══════════════════════════════════════════════════")
+        print("                📦 ENCARGOS ESPECIALES             ")
+        print("═══════════════════════════════════════════════════\n")
         print("1. Cargar un nuevo encargo")
         print("2. Ver listado de encargos activos")
         print("3. Buscar encargos")
         print("4. Actualizar estado")
         print("5. Cancelar un encargo")
         print("6. Eliminar definitivamente un encargo")
-        print("9. Volver a la pantalla principal")
+        print("0. Volver a la pantalla principal")
 
         opcion = input("\n¿Qué querés hacer? ")
 
@@ -303,7 +303,7 @@ def menu_encargos(lista_encargos, lista_clientes, lista_proveedores):
             else:
                 print("\nEliminación cancelada.")
 
-        elif opcion == "9":
+        elif opcion == "0":
             break
 
         else:

@@ -82,6 +82,9 @@ def listar_proveedores(lista_proveedores):
 
 
 def buscar_proveedor(lista_proveedores):
+    if not lista_proveedores:
+        print("No hay proveedores.")
+        return
 
     texto = input("Buscar nombre o producto: ").lower()
 
@@ -107,6 +110,9 @@ def buscar_proveedor(lista_proveedores):
 
 
 def actualizar_proveedor(lista_proveedores):
+    if not lista_proveedores:
+        print("No hay proveedores.")
+        return
 
     try:
         id_buscar = int(input("ID a actualizar: "))

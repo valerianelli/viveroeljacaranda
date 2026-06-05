@@ -12,14 +12,15 @@ def menu_proveedores(lista_proveedores):
     opcion = ""
 
     while opcion != "0":
-
-        print("\n===== MENÚ PROVEEDORES =====")
+        print("\n═══════════════════════════════════════════════════")
+        print("                  🚚 PROVEEDORES                     ")
+        print("═══════════════════════════════════════════════════\n")
         print("1. Registrar proveedor")
         print("2. Listar proveedores")
         print("3. Buscar proveedor")
         print("4. Actualizar proveedor")
         print("5. Eliminar proveedor")
-        print("0. Salir")
+        print("0. Salir\n")
 
         opcion = input("Seleccione una opción: ").strip()
 

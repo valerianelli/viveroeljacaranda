@@ -19,6 +19,14 @@ from .visualizacion import mostrar_ventas, imprimir_items
 
 def registrar_venta(ventas, clientes, plantas):
     """Guía al usuario para registrar una nueva venta completa."""
+    if not clientes:
+        print("Aún no hay clientes cargados, cargue primero un cliente...")
+        return
+
+    if not plantas:
+        print("Aún no hay plantas cargadas, cargue primero una planta...")
+        return
+
     id_cliente = pedir_cliente(clientes)
     if not id_cliente:
         return

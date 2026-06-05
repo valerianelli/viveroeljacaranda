@@ -12,14 +12,16 @@ from.stock import (
 # Menu principal 
 def menu_stock(plantas):
     opcion = ""
-    while opcion != "6":
-        print("\n===== MENÚ STOCK DE PLANTAS =====")
+    while opcion != "0":
+        print("\n═══════════════════════════════════════════════════")
+        print("                🌿 STOCK DE PLANTAS                 ")
+        print("═══════════════════════════════════════════════════\n")
         print("1. Cargar planta")
         print("2. Listar plantas")
         print("3. Buscar planta")
         print("4. Actualizar stock planta")
         print("5. Eliminar planta")
-        print("6. Volver al menu principal")
+        print("0. Volver al menu principal\n")
 
         opcion = input("Seleccione una opción: ")
 
@@ -35,7 +37,7 @@ def menu_stock(plantas):
                 actualizar_stock_planta(plantas)
             case "5": 
                 eliminar_planta(plantas)
-            case "6": 
+            case "0": 
                 print("Volviendo al menú principal...")
             case _: 
                 print("Opción inválida. Por favor, Intente nuevamente.")

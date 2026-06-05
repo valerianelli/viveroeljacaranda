@@ -10,13 +10,15 @@ def menu_clientes(clientes, ventas, plantas, encargos):
     seguir = True
 
     while seguir:
-        print("\n========== MENÚ CLIENTES ==========")
+        print("\n═══════════════════════════════════════════════════")
+        print("                   👤 CLIENTES                     ")
+        print("═══════════════════════════════════════════════════\n")
         print("1. Registrar cliente")
         print("2. Listar clientes")
         print("3. Buscar cliente")
         print("4. Modificar cliente")
         print("5. Eliminar cliente")
-        print("0. Volver al menú principal")
+        print("0. Volver al menú principal\n")
 
         opcion = input("Seleccione una opción: ")
 
