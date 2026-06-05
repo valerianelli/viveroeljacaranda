@@ -62,7 +62,7 @@ vivero/
 
 ### 👤 Clientes
 - Registro con DNI, nombre, teléfono, email opcional y tipo (Particular, Paisajista, Empresa, Vivero amigo)
-- Búsqueda por DNI o nombre
+- Búsqueda por DNI o nombre — al encontrar un cliente se muestra automáticamente su historial de compras y sus encargos activos
 - Modificación y eliminación con confirmación
 
 ### 💰 Ventas
